@@ -12,7 +12,6 @@ class Signinbutton extends StatelessWidget {
   const Signinbutton(
       {Key key, this.text, this.icon, this.maincolor, this.Callback})
       : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(

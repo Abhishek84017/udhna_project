@@ -1,3 +1,4 @@
+import 'package:avt_yuwas/homescreen.dart';
 import 'package:avt_yuwas/pageroute.dart';
 import 'package:avt_yuwas/text_field.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,13 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  final TextEditingController _Email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  final TextEditingController _vottername = TextEditingController();
+  final TextEditingController _fathername = TextEditingController();
+  final TextEditingController _mobile = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _age = TextEditingController();
+
+  String genderValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -25,55 +31,95 @@ class _SignupState extends State<Signup> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top:50),
+                  padding: const EdgeInsets.only(top: 50),
                   child: Center(
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(children: [
                         TextSpan(
-                            text: 'Create A New Account\n',
-                            style: TextStyle(
-                                color: Colors.blue, fontSize: 18.sp)),
+                            text: 'Add A New Vooter\n',
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 18.sp)),
                       ]),
                     ),
                   ),
                 ),
                 Inputtext(
-                  text: 'Reg.Number',
-                  controller: _Email,
-                  onEditingcomplete: () => FocusScope.of(context).nextFocus(),
-                  obscureText: false,
-                ),
-                Inputtext(
                   text: 'Votter Name',
-                  controller: _Email,
+                  controller: _vottername,
                   onEditingcomplete: () => FocusScope.of(context).nextFocus(),
                   obscureText: false,
                 ),
                 Inputtext(
                   text: 'Father Name',
-                  controller: _Email,
+                  controller: _fathername,
+                  onEditingcomplete: () => FocusScope.of(context).nextFocus(),
+                  obscureText: false,
+                ),
+                Inputtext(
+                  text: 'Mobile Number',
+                  controller: _mobile,
                   onEditingcomplete: () => FocusScope.of(context).nextFocus(),
                   obscureText: false,
                 ),
                 Inputtext(
                   text: 'House Number',
-                  controller: _Email,
+                  controller: _email,
                   onEditingcomplete: () => FocusScope.of(context).nextFocus(),
                   obscureText: false,
                 ),
                 Inputtext(
                   text: 'Age',
-                  controller: _Email,
+                  controller: _age,
                   onEditingcomplete: () => FocusScope.of(context).nextFocus(),
                   obscureText: false,
                 ),
+                Container(
+                  margin: EdgeInsets.only(left: 20.w),
+                  width: double.infinity,
+                  child: const Text(
+                    'Gender',
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.0.w, vertical: 5.0.h),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Row(
+                      children: [
+                        Radio(
+                            value: 'Male',
+                            groupValue: genderValue,
+                            onChanged: (val) {
+                              genderValue = val;
+                              setState(() {});
+                            }),
+                        const Text('Male'),
+                        Radio(
+                            value: 'Female',
+                            groupValue: genderValue,
+                            onChanged: (val) {
+                              genderValue = val;
+                              setState(() {});
+                            }),
+                        const Text('Female'),
+                      ],
+                    ),
+                  ),
+                ),
                 Signinbutton(
-                  text: 'Create Voter',
+                  text: 'Add Voter',
                   icon: Icons.arrow_forward,
                   maincolor: Colors.blue,
                   Callback: () {
-                    Navigator.push(context, RotationRoute());
+                    Navigator.push(
+                        context, RotationRoute(page: const HomeScreen()));
                   },
                 ),
               ],

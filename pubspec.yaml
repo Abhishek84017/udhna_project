@@ -38,6 +38,7 @@ dependencies:
   advance_pdf_viewer: ^2.0.1
   syncfusion_flutter_pdfviewer: ^19.4.43-beta
   flutter_pdfview: ^1.2.1
+  fluttertoast: ^8.0.8
 
 
 
@@ -71,7 +72,7 @@ flutter:
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
-# https://flutter.dev/assets-and-images/#resolution-aware.
+  # https://flutter.dev/assets-and-images/#resolution-aware.
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
