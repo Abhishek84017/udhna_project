@@ -9,7 +9,6 @@ import 'signinbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 class LoginModel {
   String username;
   String password;
@@ -46,7 +45,8 @@ class _SigninState extends State<Signin> {
   final TextEditingController _Email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-  void checklogin() async {
+  //LoginModel user;
+  Future<LoginModel> checklogin() async {
     var data = <String, dynamic>{
       "username": _Email.text,
       "password": _password.text,
@@ -56,14 +56,22 @@ class _SigninState extends State<Signin> {
     final response = await http.post(
         Uri.https('votersmanagement.com', '/api/check-boy-login'),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(LoginModel.fromJson(data)));
+        body: jsonEncode((data)));
+
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
+      //login.add(LoginModel.fromJson(jsonData));
+      //var item = login;
+      //print(item.status)
+      //user = LoginModel.fromJson(jsonData);
+      //print(user.username);
       if (jsonData['status'] == 'true') {
         Navigator.push(context, RotationRoute(page: const HomeScreen()));
       } else {
-        Fluttertoast.showToast(msg: 'Username or password wrong', backgroundColor: Colors.red);
+        Fluttertoast.showToast(
+            msg: 'Username or password wrong', backgroundColor: Colors.red);
       }
+      return LoginModel.fromJson(jsonData);
     }
   }
 

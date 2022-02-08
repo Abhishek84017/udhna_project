@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:avt_yuwas/add_all_family.dart';
+import 'package:avt_yuwas/get_allvoters.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'signinbutton.dart';
 import 'pageroute.dart';
 import 'pdfviewer.dart';
@@ -61,15 +64,15 @@ class BoothModel {
 
   BoothModel(
       {this.id,
-        this.assemblyId,
-        this.title,
-        this.pollingLocation,
-        this.pollingNumber,
-        this.status,
-        this.inserted,
-        this.insertedBy,
-        this.modified,
-        this.modifiedBy});
+      this.assemblyId,
+      this.title,
+      this.pollingLocation,
+      this.pollingNumber,
+      this.status,
+      this.inserted,
+      this.insertedBy,
+      this.modified,
+      this.modifiedBy});
 
   BoothModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -116,17 +119,17 @@ class SocityModel {
 
   SocityModel(
       {this.id,
-        this.assemblyId,
-        this.boothId,
-        this.title,
-        this.address,
-        this.nameFile,
-        this.status,
-        this.inserted,
-        this.insertedBy,
-        this.modified,
-        this.modifiedBy,
-        this.entryDone});
+      this.assemblyId,
+      this.boothId,
+      this.title,
+      this.address,
+      this.nameFile,
+      this.status,
+      this.inserted,
+      this.insertedBy,
+      this.modified,
+      this.modifiedBy,
+      this.entryDone});
 
   SocityModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -150,20 +153,20 @@ class SocityModel {
     data['booth_id'] = boothId;
     data['title'] = title;
     data['address'] = address;
-    data['name_file'] =nameFile;
+    data['name_file'] = nameFile;
     data['status'] = status;
-    data['inserted'] =inserted;
+    data['inserted'] = inserted;
     data['inserted_by'] = insertedBy;
-    data['modified'] =modified;
+    data['modified'] = modified;
     data['modified_by'] = modifiedBy;
     data['entry_done'] = entryDone;
     return data;
   }
 }
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -171,12 +174,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<AssemblyModel> assemblyData = <AssemblyModel>[];
   List<BoothModel> boothData = <BoothModel>[];
+  List<AssemblyModel> assembly = <AssemblyModel>[];
   List<SocityModel> socityData = <SocityModel>[];
-
   AssemblyModel button = AssemblyModel();
   String defaultAssembly;
-  String defaultBooth ;
+  String defaultBooth;
+
   String defaultSociety;
+
   void fetchAssembly() async {
     final response = await http.get(
         Uri.parse('https://www.votersmanagement.com/api/get-all-assembly'));
@@ -193,9 +198,10 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {});
     }
   }
+
   void fetchBoth() async {
-    final response = await http.get(
-        Uri.parse('https://www.votersmanagement.com/api/get-assembly-booth/1'));
+    final response = await http.get(Uri.parse(
+        'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       if (jsonData != null) {
@@ -206,9 +212,16 @@ class _HomeScreenState extends State<HomeScreen> {
       if (boothData.isNotEmpty) {
         defaultBooth = boothData.first.title;
       }
-      setState(() {});
+
+      setState(() {
+        final booth = boothData
+            .where((element) => element.title == defaultBooth)
+            .toList();
+        print(booth.map((e) => e.id).toList());
+      });
     }
   }
+
   void fetchSocity() async {
     final response = await http.get(
         Uri.parse('https://www.votersmanagement.com/api/get-booth-society/1'));
@@ -230,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchAssembly();
-    fetchBoth();
+
     fetchSocity();
   }
 
@@ -245,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Container(
-              margin: EdgeInsets.only(left: 15),
+              margin: const EdgeInsets.only(left: 15),
               width: double.infinity,
               child: const Text(
                 'Select Assembly:',
@@ -276,6 +289,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 onChanged: (newValue) {
                   setState(() {
                     defaultAssembly = newValue;
+                    assembly = assemblyData
+                        .where((element) => element.title == defaultAssembly)
+                        .toList();
+                    fetchBoth();
                   });
                 },
               ),
@@ -284,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 15),
+                margin: const EdgeInsets.only(left: 15),
                 width: double.infinity,
                 child: const Text(
                   'Select Both:',
@@ -308,14 +325,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: const Icon(Icons.keyboard_arrow_down),
                     items: boothData.map((items) {
                       return DropdownMenuItem(
-                          value: items.title,
-                          child: Text(items.title));
+                          value: items.title, child: Text(items.title));
                     }).toList(),
                     onChanged: (String newValue) {
                       setState(() {
                         defaultBooth = newValue;
                       });
                     },
+                    onTap: () {},
                   ),
                 ),
               ),
@@ -324,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 15),
+                margin: const EdgeInsets.only(left: 15),
                 width: double.infinity,
                 child: const Text(
                   'Select Socity:',
@@ -347,11 +364,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     items: socityData.map((items) {
-                      return DropdownMenuItem(value: items.title, child: Text(items.title));
+                      return DropdownMenuItem(
+                          value: items.title, child: Text(items.title));
                     }).toList(),
                     onChanged: (String newValue) {
                       setState(() {
                         defaultSociety = newValue;
+                        final society = socityData
+                            .where((element) => element.title == defaultSociety)
+                            .toList();
+                        print(defaultSociety);
+                        print(society.map((e) => e.nameFile).toList());
                       });
                     },
                   ),
@@ -376,14 +399,23 @@ class _HomeScreenState extends State<HomeScreen> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+            Container(
+              height: 100.h,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Voter Management Service',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
+                ),
               ),
-              child: Text('Drawer Header'),
             ),
             ListTile(
-              title: const Text('Drawer Content'),
+              title: const Text('Home'),
               onTap: () {
                 // Update the state of the app
                 // ...
@@ -392,12 +424,13 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              title: const Text(''),
+              title: const Text('All Voters List'),
               onTap: () {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+                Navigator.of(context).pop();
+                Navigator.push(context, RotationRoute(page: const GetAllVoter()));
               },
             ),
           ],

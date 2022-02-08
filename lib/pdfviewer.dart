@@ -1,3 +1,4 @@
+import 'package:avt_yuwas/add_all_family.dart';
 import 'package:avt_yuwas/pageroute.dart';
 import 'package:avt_yuwas/sign_up_page.dart';
 import 'package:avt_yuwas/signinbutton.dart';
@@ -28,31 +29,35 @@ class _pdfviweerState extends State<pdfviweer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FlutterPluginPDFViewer'),
+        title: const Text('All voters'),
       ),
-      body: Container(
-          child: Column(
+      body: Column(
         children: [
-          Container(
-            height: 620,
-            width: 500,
+          Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SfPdfViewer.asset(document // filePath: abc,),
                     ),
           ),
-          Container(
-            child: Signinbutton(
-              text: 'Add New Vooter',
-              icon: Icons.arrow_forward,
-              maincolor: Colors.blue,
-              Callback: () {
-                Navigator.push(context, RotationRoute(page: Signup()));
-              },
-            ),
-          )
+          Signinbutton(
+            text: 'Add New Vooter',
+            icon: Icons.arrow_forward,
+            maincolor: Colors.blue,
+            Callback: () {
+              Navigator.push(context, RotationRoute(page: Signup()));
+            },
+          ),
+          Signinbutton(
+            text: 'Add New Family Vooter',
+            icon: Icons.arrow_forward,
+            maincolor: Colors.blue,
+            Callback: () {
+              Navigator.push(
+                  context, RotationRoute(page: const Vooterfamily()));
+            },
+          ),
         ],
-      )),
+      ),
     );
   }
 }
