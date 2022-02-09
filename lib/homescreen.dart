@@ -173,8 +173,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<AssemblyModel> assemblyData = <AssemblyModel>[];
-  List<BoothModel> boothData = <BoothModel>[];
   List<AssemblyModel> assembly = <AssemblyModel>[];
+  List<BoothModel> boothData = <BoothModel>[];
+  List<BoothModel> booth = <BoothModel>[];
   List<SocityModel> socityData = <SocityModel>[];
   AssemblyModel button = AssemblyModel();
   String defaultAssembly;
@@ -212,19 +213,15 @@ class _HomeScreenState extends State<HomeScreen> {
       if (boothData.isNotEmpty) {
         defaultBooth = boothData.first.title;
       }
-
-      setState(() {
-        final booth = boothData
-            .where((element) => element.title == defaultBooth)
-            .toList();
-        print(booth.map((e) => e.id).toList());
-      });
+      setState(() {});
     }
   }
 
   void fetchSocity() async {
-    final response = await http.get(
-        Uri.parse('https://www.votersmanagement.com/api/get-booth-society/1'));
+    print('hello');
+    print(booth[0].id);
+    final response = await http.get(Uri.parse(
+        'https://www.votersmanagement.com/api/get-booth-society/${booth[0].id}'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       if (jsonData != null) {
@@ -232,8 +229,10 @@ class _HomeScreenState extends State<HomeScreen> {
           socityData.add(SocityModel.fromJson(v));
         });
       }
+      print(socityData[0].title);
       if (socityData.isNotEmpty) {
         defaultSociety = socityData.first.title;
+        print(socityData.first.title);
       }
       setState(() {});
     }
@@ -243,8 +242,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchAssembly();
-
-    fetchSocity();
   }
 
   @override
@@ -277,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
                 hint: const Text('Select Assembly'),
-                value: defaultAssembly,
+                value: defaultAssembly ?? '',
                 isDense: false,
                 isExpanded: true,
                 icon: const Icon(Icons.keyboard_arrow_down),
@@ -330,6 +327,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     onChanged: (String newValue) {
                       setState(() {
                         defaultBooth = newValue;
+                        booth = boothData
+                            .where((element) => element.title == defaultBooth)
+                            .toList();
+                        fetchSocity();
                       });
                     },
                     onTap: () {},
@@ -430,7 +431,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 // ...
                 // Then close the drawer
                 Navigator.of(context).pop();
-                Navigator.push(context, RotationRoute(page: const GetAllVoter()));
+                Navigator.push(
+                    context, RotationRoute(page: const GetAllVoter()));
               },
             ),
           ],

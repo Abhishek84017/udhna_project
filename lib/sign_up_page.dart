@@ -1,8 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:avt_yuwas/homescreen.dart';
-import 'package:avt_yuwas/pageroute.dart';
 import 'package:avt_yuwas/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
