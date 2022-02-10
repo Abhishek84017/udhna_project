@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:avt_yuwas/add_all_family.dart';
 import 'package:avt_yuwas/get_allvoters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -175,12 +173,13 @@ class _HomeScreenState extends State<HomeScreen> {
   List<AssemblyModel> assemblyData = <AssemblyModel>[];
   List<AssemblyModel> assembly = <AssemblyModel>[];
   List<BoothModel> boothData = <BoothModel>[];
+  List<BoothModel> finalboothData = <BoothModel>[];
   List<BoothModel> booth = <BoothModel>[];
   List<SocityModel> socityData = <SocityModel>[];
+  List<SocityModel> dataSocity = <SocityModel>[];
   AssemblyModel button = AssemblyModel();
   String defaultAssembly;
   String defaultBooth;
-
   String defaultSociety;
 
   void fetchAssembly() async {
@@ -201,6 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void fetchBoth() async {
+    boothData.clear();
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
@@ -210,18 +210,21 @@ class _HomeScreenState extends State<HomeScreen> {
           boothData.add(BoothModel.fromJson(v));
         });
       }
-      if (boothData.isNotEmpty) {
-        defaultBooth = boothData.first.title;
-      }
-      setState(() {});
+      setState(() {
+        finalboothData = boothData
+            .where((element) => element.assemblyId == assembly[0].id)
+            .toList();
+        if (finalboothData.isNotEmpty) {
+          defaultBooth = boothData.first.title;
+        }
+      });
     }
   }
 
-  void fetchSocity() async {
-    print('hello');
-    print(booth[0].id);
+  Future<SocityModel> fetchSocity() async {
+    socityData.clear();
     final response = await http.get(Uri.parse(
-        'https://www.votersmanagement.com/api/get-booth-society/${booth[0].id}'));
+        'https://votersmanagement.com/api/get-booth-society/${booth[0].id}'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       if (jsonData != null) {
@@ -229,12 +232,14 @@ class _HomeScreenState extends State<HomeScreen> {
           socityData.add(SocityModel.fromJson(v));
         });
       }
-      print(socityData[0].title);
-      if (socityData.isNotEmpty) {
-        defaultSociety = socityData.first.title;
-        print(socityData.first.title);
-      }
-      setState(() {});
+      setState(() {
+        dataSocity = socityData
+            .where((element) => element.boothId == booth[0].id)
+            .toList();
+        if (dataSocity.isNotEmpty) {
+          defaultSociety = dataSocity.first.title;
+        }
+      });
     }
   }
 
@@ -274,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
                 hint: const Text('Select Assembly'),
-                value: defaultAssembly ?? '',
+                value: defaultAssembly,
                 isDense: false,
                 isExpanded: true,
                 icon: const Icon(Icons.keyboard_arrow_down),
@@ -283,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return DropdownMenuItem(
                       value: items.title, child: Text(items.title));
                 }).toList(),
-                onChanged: (newValue) {
+                onChanged: (String newValue) {
                   setState(() {
                     defaultAssembly = newValue;
                     assembly = assemblyData
@@ -320,18 +325,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     value: defaultBooth,
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: boothData.map((items) {
+                    items: finalboothData.map((items) {
                       return DropdownMenuItem(
                           value: items.title, child: Text(items.title));
                     }).toList(),
                     onChanged: (String newValue) {
-                      setState(() {
-                        defaultBooth = newValue;
-                        booth = boothData
-                            .where((element) => element.title == defaultBooth)
-                            .toList();
-                        fetchSocity();
-                      });
+                      defaultBooth = newValue;
+                      booth = boothData
+                          .where((element) => element.title == defaultBooth)
+                          .toList();
+                      defaultSociety = null;
+                      fetchSocity();
                     },
                     onTap: () {},
                   ),
@@ -374,8 +378,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         final society = socityData
                             .where((element) => element.title == defaultSociety)
                             .toList();
-                        print(defaultSociety);
-                        print(society.map((e) => e.nameFile).toList());
                       });
                     },
                   ),
