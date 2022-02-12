@@ -173,14 +173,15 @@ class _HomeScreenState extends State<HomeScreen> {
   List<AssemblyModel> assemblyData = <AssemblyModel>[];
   List<AssemblyModel> assembly = <AssemblyModel>[];
   List<BoothModel> boothData = <BoothModel>[];
-  List<BoothModel> finalboothData = <BoothModel>[];
   List<BoothModel> booth = <BoothModel>[];
   List<SocityModel> socityData = <SocityModel>[];
   List<SocityModel> dataSocity = <SocityModel>[];
-  AssemblyModel button = AssemblyModel();
+
   String defaultAssembly;
   String defaultBooth;
   String defaultSociety;
+  String boothlocation;
+  String boothnumber;
 
   void fetchAssembly() async {
     final response = await http.get(
@@ -199,8 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void fetchBoth() async {
+  void fetchBooth() async {
     boothData.clear();
+    print(assembly[0].id);
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
@@ -210,18 +212,16 @@ class _HomeScreenState extends State<HomeScreen> {
           boothData.add(BoothModel.fromJson(v));
         });
       }
+      print(boothData.map((e) => e.title).toList());
       setState(() {
-        finalboothData = boothData
-            .where((element) => element.assemblyId == assembly[0].id)
-            .toList();
-        if (finalboothData.isNotEmpty) {
+        if (boothData.isNotEmpty) {
           defaultBooth = boothData.first.title;
         }
       });
     }
   }
 
-  Future<SocityModel> fetchSocity() async {
+  void fetchSocity() async {
     socityData.clear();
     final response = await http.get(Uri.parse(
         'https://votersmanagement.com/api/get-booth-society/${booth[0].id}'));
@@ -232,11 +232,9 @@ class _HomeScreenState extends State<HomeScreen> {
           socityData.add(SocityModel.fromJson(v));
         });
       }
+
       setState(() {
-        dataSocity = socityData
-            .where((element) => element.boothId == booth[0].id)
-            .toList();
-        if (dataSocity.isNotEmpty) {
+        if (socityData.isNotEmpty) {
           defaultSociety = dataSocity.first.title;
         }
       });
@@ -294,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     assembly = assemblyData
                         .where((element) => element.title == defaultAssembly)
                         .toList();
-                    fetchBoth();
+                    fetchBooth();
                   });
                 },
               ),
@@ -306,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.only(left: 15),
                 width: double.infinity,
                 child: const Text(
-                  'Select Both:',
+                  'Select Booth:',
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -325,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     value: defaultBooth,
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: finalboothData.map((items) {
+                    items: boothData.map((items) {
                       return DropdownMenuItem(
                           value: items.title, child: Text(items.title));
                     }).toList(),
@@ -334,7 +332,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       booth = boothData
                           .where((element) => element.title == defaultBooth)
                           .toList();
-                      defaultSociety = null;
+                      boothlocation = booth[0].pollingLocation;
+                      boothnumber = booth[0].pollingNumber;
                       fetchSocity();
                     },
                     onTap: () {},
@@ -349,7 +348,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.only(left: 15),
                 width: double.infinity,
                 child: const Text(
-                  'Select Socity:',
+                  'Selected Booth Address:',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.w),
+                  border: Border.all(color: Colors.black,width:2.w),
+                  ),
+                child:  Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(boothlocation ?? ''),
+                      Text(boothnumber ?? '',),
+                    ],
+                  ),
+
+                ),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(left: 15),
+                width: double.infinity,
+                child: const Text(
+                  'Select Society:',
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -364,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton(
-                    hint: const Text('Select Socity'),
+                    hint: const Text('Select Society'),
                     value: defaultSociety,
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),

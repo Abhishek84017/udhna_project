@@ -42,7 +42,7 @@ class AddVooterModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  Map<String, dynamic>();
     data['assembly'] = assembly;
     data['booth'] = booth;
     data['society'] = society;
@@ -105,7 +105,7 @@ class _SignupState extends State<Signup> {
 
     try {
       if (response.statusCode == 200) {
-        print(response.body);
+
         Fluttertoast.showToast(
             msg: 'New Vooter ADDED', backgroundColor: Colors.black);
         _vottername.clear();
@@ -118,7 +118,7 @@ class _SignupState extends State<Signup> {
       Fluttertoast.showToast(
           msg: 'no internet connection', backgroundColor: Colors.black);
     } catch (_) {
-      print(_);
+
       Fluttertoast.showToast(msg: 'something went worng');
     }
   }
