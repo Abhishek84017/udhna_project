@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class pdfviweer extends StatefulWidget {
+
+  String pdf;
+  pdfviweer({Key key, this.pdf}) : super(key: key);
   @override
   _pdfviweerState createState() => _pdfviweerState();
 }
@@ -21,7 +24,8 @@ class _pdfviweerState extends State<pdfviweer> {
   }
 
   loadDocument() async {
-    document = 'assests/images/DummyPDF.pdf';
+    document = 'https://votersmanagement.com/${widget.pdf}';
+    print(document);
     setState(() => _isLoading = false);
   }
 
@@ -36,7 +40,7 @@ class _pdfviweerState extends State<pdfviweer> {
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : SfPdfViewer.asset(document // filePath: abc,),
+                : SfPdfViewer.network(document // filePath: abc,),
                     ),
           ),
           Signinbutton(

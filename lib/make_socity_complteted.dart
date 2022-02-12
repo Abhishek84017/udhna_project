@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'package:avt_yuwas/get_allvoters.dart';
-import 'package:avt_yuwas/make_socity_complteted.dart';
-import 'package:avt_yuwas/seachsociety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'signinbutton.dart';
-import 'pageroute.dart';
-import 'pdfviewer.dart';
 import 'package:http/http.dart' as http;
 
 class AssemblyModel {
@@ -164,14 +160,14 @@ class SocityModel {
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key}) : super(key: key);
+class SocietyCompleted extends StatefulWidget {
+  const SocietyCompleted({Key key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _SocietyCompletedState createState() => _SocietyCompletedState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SocietyCompletedState extends State<SocietyCompleted> {
   List<AssemblyModel> assemblyData = <AssemblyModel>[];
   List<AssemblyModel> assembly = <AssemblyModel>[];
   List<BoothModel> boothData = <BoothModel>[];
@@ -184,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String defaultSociety;
   String boothLocation;
   String boothNumber;
-  String pdfData;
+  int societyCompletedId;
 
   void fetchAssembly() async {
     final response = await http.get(
@@ -243,18 +239,36 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void completed() async {
+    var data = <String, dynamic>{"society": societyCompletedId};
+
+    final response = await http.post(
+        Uri.https('votersmanagement.com', 'api/mark-society-completed'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(data));
+    if (response.statusCode == 200) {
+      Fluttertoast.showToast(
+          msg: 'Selected Society Completed', backgroundColor: Colors.black);
+      boothLocation = '';
+      boothNumber = '';
+      assemblyData.clear();
+      boothData.clear();
+      socityData.clear();
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     fetchAssembly();
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Society'),
+        title: const Text('Make Society Completed'),
       ),
       body: Column(
         children: [
@@ -415,13 +429,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     }).toList(),
                     onChanged: (String newValue) {
                       setState(() {
-
                         defaultSociety = newValue;
                         sendsocitydata = socityData
                             .where((element) => element.title == defaultSociety)
                             .toList();
                         if (sendsocitydata[0].nameFile != null) {
-                          pdfData = sendsocitydata[0].nameFile;
+                          societyCompletedId = sendsocitydata[0].id;
                         }
                       });
                     },
@@ -430,89 +443,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-
           Signinbutton(
-            text: 'See Voters',
+            text: 'Make Society Completed',
             maincolor: Colors.blue,
             Callback: () {
-              Navigator.push(
-                  context,
-                  RotationRoute(
-                      page: pdfviweer(
-                        pdf: pdfData,
-                      )));
-            },
-          ),
-          Signinbutton(
-            text: 'Clear All',
-            maincolor: Colors.blue,
-            Callback: () {
-              boothData.clear();
-              boothLocation = '';
-              boothNumber = '';
-              socityData.clear();
-              setState(() {});
+              completed();
             },
           ),
         ],
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            Container(
-              height: 100.h,
-              child: DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Voter Management Service',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.sp,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('All Voters List'),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context, RotationRoute(page: const GetAllVoter()));
-              },
-            ),
-            ListTile(
-              title: const Text('search society'),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context, RotationRoute(page: const SeachSociety()));
-              },
-            ),
-            ListTile(
-              title: const Text('Mark Society Completed'),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(context, RotationRoute(page: const SocietyCompleted()));
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

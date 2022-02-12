@@ -21,8 +21,8 @@ class _SeachSocietyState extends State<SeachSociety> {
       body: Stack(
         children: [
           WebView(
-            backgroundColor: Colors.white,
-            initialUrl: 'https://votersmanagement.com',
+            zoomEnabled: true,
+            initialUrl: 'https://www.votersmanagement.com/',
             javascriptMode: JavascriptMode.unrestricted,
             onPageStarted: (finish) {
               setState(() {
