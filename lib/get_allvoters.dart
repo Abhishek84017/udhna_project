@@ -26,21 +26,21 @@ class GetAllVoterModel {
 
   GetAllVoterModel(
       {this.id,
-      this.assemblyId,
-      this.boothId,
-      this.societyId,
-      this.regNumber,
-      this.name,
-      this.fatherName,
-      this.houseNumber,
-      this.age,
-      this.gender,
-      this.status,
-      this.inserted,
-      this.insertedBy,
-      this.modified,
-      this.modifiedBy,
-      this.entryBoyId});
+        this.assemblyId,
+        this.boothId,
+        this.societyId,
+        this.regNumber,
+        this.name,
+        this.fatherName,
+        this.houseNumber,
+        this.age,
+        this.gender,
+        this.status,
+        this.inserted,
+        this.insertedBy,
+        this.modified,
+        this.modifiedBy,
+        this.entryBoyId});
 
   GetAllVoterModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -130,26 +130,26 @@ class _GetAllVoterState extends State<GetAllVoter> {
         automaticallyImplyLeading: false,
       ),
       body: _isloding ? const Center(child:  CircularProgressIndicator()) :  ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        var item = data[index];
-        return Padding(
-          padding:  EdgeInsets.symmetric(horizontal:7.w),
-          child: Card(
-            shape:  RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(6.w))
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          var item = data[index];
+          return Padding(
+            padding:  EdgeInsets.symmetric(horizontal:7.w),
+            child: Card(
+              shape:  RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(6.w))
+              ),
+              child: ListTile(
+                leading: Text(item.id.toString() ?? ''),
+                title: Text(item.name ?? ''),
+                subtitle: Text(item.regNumber ?? ''),
+                trailing: Text(item.societyId.toString() ?? ''),
+              ),
             ),
-           child: ListTile(
-             leading: Text(item.id.toString() ?? ''),
-             title: Text(item.name ?? ''),
-             subtitle: Text(item.regNumber ?? ''),
-             trailing: Text(item.societyId.toString() ?? ''),
-           ),
-          ),
-        );
-      },
-      itemCount: data.length,
-    ),
+          );
+        },
+        itemCount: data.length,
+      ),
     );
   }
 }

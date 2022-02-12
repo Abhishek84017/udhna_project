@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:avt_yuwas/get_allvoters.dart';
+import 'package:avt_yuwas/seachsociety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'signinbutton.dart';
@@ -164,7 +165,6 @@ class SocityModel {
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -180,8 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String defaultAssembly;
   String defaultBooth;
   String defaultSociety;
-  String boothlocation;
-  String boothnumber;
+  String boothLocation;
+  String boothNumber;
 
   void fetchAssembly() async {
     final response = await http.get(
@@ -202,6 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void fetchBooth() async {
     boothData.clear();
+
     print(assembly[0].id);
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
@@ -287,13 +288,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: items.title, child: Text(items.title));
                 }).toList(),
                 onChanged: (String newValue) {
-                  setState(() {
-                    defaultAssembly = newValue;
-                    assembly = assemblyData
-                        .where((element) => element.title == defaultAssembly)
-                        .toList();
-                    fetchBooth();
-                  });
+                  defaultAssembly = newValue;
+                  assembly = assemblyData
+                      .where((element) => element.title == defaultAssembly)
+                      .toList();
+                  boothLocation ='';
+                  boothNumber = '';
+                  fetchBooth();
                 },
               ),
             ),
@@ -332,8 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       booth = boothData
                           .where((element) => element.title == defaultBooth)
                           .toList();
-                      boothlocation = booth[0].pollingLocation;
-                      boothnumber = booth[0].pollingNumber;
+                      if (booth != null) {
+                        boothLocation = booth[0].pollingLocation;
+                        boothNumber = booth[0].pollingNumber;
+                      }
                       fetchSocity();
                     },
                     onTap: () {},
@@ -358,18 +361,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.w),
-                  border: Border.all(color: Colors.black,width:2.w),
-                  ),
-                child:  Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                  border: Border.all(color: Colors.black, width: 2.w),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(boothlocation ?? ''),
-                      Text(boothnumber ?? '',),
+                      Text(boothLocation ?? ''),
+                      Text(
+                        boothNumber ?? '',
+                      ),
                     ],
                   ),
-
                 ),
               ),
             ],
@@ -460,12 +465,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               title: const Text('All Voters List'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
                 Navigator.of(context).pop();
                 Navigator.push(
                     context, RotationRoute(page: const GetAllVoter()));
+              },
+            ),
+             ListTile(
+              title: const Text('search society'),
+              onTap: (){
+                Navigator.of(context).pop();
+                Navigator.push(context, RotationRoute(page: const SeachSociety()));
               },
             ),
           ],
