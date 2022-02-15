@@ -1,13 +1,17 @@
 import 'dart:convert';
-import 'package:avt_yuwas/get_allvoters.dart';
-import 'package:avt_yuwas/make_socity_complteted.dart';
-import 'package:avt_yuwas/seachsociety.dart';
+import 'package:avt_yuwas/drawerfields/get_allvoters.dart';
+import 'package:avt_yuwas/constants/global.dart';
+import 'package:avt_yuwas/drawerfields/make_socity_complteted.dart';
+import 'package:avt_yuwas/drawerfields/seachsociety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'signinbutton.dart';
-import 'pageroute.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../pages/widgets/signinbutton.dart';
+import '../pages/widgets/pageroute.dart';
 import 'pdfviewer.dart';
 import 'package:http/http.dart' as http;
+import '../constants/global.dart';
+
 
 class AssemblyModel {
   int id;
@@ -247,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchAssembly();
-
   }
 
   @override
@@ -415,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }).toList(),
                     onChanged: (String newValue) {
                       setState(() {
-
+                        pdfData = '';
                         defaultSociety = newValue;
                         sendsocitydata = socityData
                             .where((element) => element.title == defaultSociety)
@@ -430,17 +433,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-
           Signinbutton(
             text: 'See Voters',
             maincolor: Colors.blue,
-            Callback: () {
-              Navigator.push(
-                  context,
-                  RotationRoute(
-                      page: pdfviweer(
-                        pdf: pdfData,
-                      )));
+            Callback: () async {
+              if(assembly.isEmpty)
+                {
+                  Fluttertoast.showToast(msg: 'Assembly Not Selected');
+                  return;
+                }
+              if(booth.isEmpty)
+              {
+                Fluttertoast.showToast(msg: 'Booth Not Selected');
+                return;
+              }
+              if(sendsocitydata.isEmpty)
+              {
+                Fluttertoast.showToast(msg: 'Society Not Selected');
+                return;
+              }
+              await kSharedPreferences.setStringList('AllId',<String>[assembly[0].id.toString(),booth[0].id.toString(),sendsocitydata[0].id.toString()]);
+              Navigator.push(context, RotationRoute(page: pdfviweer(pdf: pdfData,)));
             },
           ),
           Signinbutton(
@@ -508,7 +521,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('Mark Society Completed'),
               onTap: () {
                 Navigator.of(context).pop();
-                Navigator.push(context, RotationRoute(page: const SocietyCompleted()));
+                Navigator.push(
+                    context, RotationRoute(page: const SocietyCompleted()));
               },
             ),
           ],

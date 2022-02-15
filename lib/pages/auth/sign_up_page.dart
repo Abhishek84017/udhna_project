@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:avt_yuwas/text_field.dart';
+import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:avt_yuwas/signinbutton.dart';
+import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import '../../constants/global.dart';
+
 
 class AddVooterModel {
   int assembly;
@@ -64,8 +66,11 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+
+
   void addVoter() async {
-    if (_vottername.text.isEmpty ||
+     final List<String> items = kSharedPreferences.getStringList('AllId');
+     if (_vottername.text.isEmpty ||
         _fathername.text.isEmpty ||
         _mobile.text.isEmpty ||
         _housenumber.text.isEmpty ||
@@ -82,15 +87,15 @@ class _SignupState extends State<Signup> {
       return;
     }
     var b = int.parse(_age.text);
-    if(b <= 18 )
+    if(b < 18 )
       {
         Fluttertoast.showToast(msg: 'Age must be 18',backgroundColor: Colors.black);
         return;
       }
     var data = <String, dynamic>{
-      "assembly": 1,
-      "booth": 1,
-      "society": 1,
+      "assembly": items[0],
+      "booth": items[1],
+      "society": items[2],
       "reg_number": _mobile.text,
       "name": _vottername.text,
       "father_name": _fathername.text,

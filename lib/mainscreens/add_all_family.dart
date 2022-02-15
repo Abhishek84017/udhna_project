@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:avt_yuwas/text_field.dart';
+import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:avt_yuwas/signinbutton.dart';
+import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 

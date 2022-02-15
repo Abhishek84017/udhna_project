@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:avt_yuwas/forget_password.dart';
-import 'package:avt_yuwas/homescreen.dart';
-import 'package:avt_yuwas/pageroute.dart';
-import 'package:avt_yuwas/text_field.dart';
+import 'package:avt_yuwas/pages/auth/forget_password.dart';
+import 'package:avt_yuwas/mainscreens/homescreen.dart';
+import 'package:avt_yuwas/pages/widgets/pageroute.dart';
+import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'signinbutton.dart';
+import '../widgets/signinbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
