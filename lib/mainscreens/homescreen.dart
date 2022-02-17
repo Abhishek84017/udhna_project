@@ -3,6 +3,7 @@ import 'package:avt_yuwas/drawerfields/get_allvoters.dart';
 import 'package:avt_yuwas/constants/global.dart';
 import 'package:avt_yuwas/drawerfields/make_socity_complteted.dart';
 import 'package:avt_yuwas/drawerfields/seachsociety.dart';
+import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +12,6 @@ import '../pages/widgets/pageroute.dart';
 import 'pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import '../constants/global.dart';
-
 
 class AssemblyModel {
   int id;
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void fetchBooth() async {
     boothData.clear();
-    print(assembly[0].id);
+
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
@@ -219,7 +219,6 @@ class _HomeScreenState extends State<HomeScreen> {
           boothData.add(BoothModel.fromJson(v));
         });
       }
-      print(boothData.map((e) => e.title).toList());
       setState(() {
         if (boothData.isNotEmpty) {
           defaultBooth = boothData.first.title;
@@ -247,6 +246,25 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<bool> _onbackpress() async {
+    return await showDialog(context: context, builder:(context) =>  AlertDialog(
+      title: const Text('Do you want to exit the application'),
+      actions: [
+        TextButton(
+          child: const Text('Yes'),
+          onPressed: () {
+            kSharedPreferences.clear();
+            Navigator.pop(context,true);
+          },
+        ),
+        TextButton(
+          child: const Text('No'),
+          onPressed: () => Navigator.pop(context,false),
+        ),
+      ],
+    ));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -255,277 +273,199 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Society'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Container(
-              margin: const EdgeInsets.only(left: 15),
-              width: double.infinity,
-              child: const Text(
-                'Select Assembly:',
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 15),
-              ),
+    return WillPopScope(
+      onWillPop: _onbackpress,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Select Society'),
+        ),
+        body: Column(
+          children: [
+            DropDownButtonWidget(
+              value: defaultAssembly,
+              hinttext: 'Select Assembly',
+              items: assemblyData.map((eas) {
+                return DropdownMenuItem(value: eas.title, child: Text(eas.title));
+              }).toList(),
+              callback: (newValue) {
+                setState(() {
+                  defaultAssembly = newValue;
+                  assembly = assemblyData
+                      .where((element) => element.title == defaultAssembly)
+                      .toList();
+                  boothData.clear();
+                  booth.clear();
+                  socityData.clear();
+                  sendsocitydata.clear();
+                  boothLocation = '';
+                  boothNumber = '';
+                  fetchBooth();
+                });
+              },
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(15),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black, width: 2),
+            DropDownButtonWidget(
+              hinttext: 'Select booth',
+              value: defaultBooth,
+              items: boothData.map((item) {
+                return DropdownMenuItem(
+                    value: item.title, child: Text(item.title));
+              }).toList(),
+              callback: (newValue) {
+                setState(() {
+                  defaultBooth = newValue;
+                  booth = boothData
+                      .where((element) => element.title == defaultBooth)
+                      .toList();
+                  boothLocation = booth[0].pollingLocation;
+                  boothNumber = booth[0].pollingNumber;
+                  socityData.clear();
+                  sendsocitydata.clear();
+                  fetchSocity();
+                });
+              },
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text('Select Assembly'),
-                value: defaultAssembly,
-                isDense: false,
-                isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                iconSize: 30,
-                items: assemblyData.map((items) {
-                  return DropdownMenuItem(
-                      value: items.title, child: Text(items.title));
-                }).toList(),
-                onChanged: (String newValue) {
-                  setState(() {
-                    defaultAssembly = newValue;
-                    assembly = assemblyData
-                        .where((element) => element.title == defaultAssembly)
-                        .toList();
-                    boothLocation = '';
-                    boothNumber = '';
-                    socityData.clear();
-                    fetchBooth();
-                  });
-                },
-              ),
+            DropDownButtonWidget(
+              hinttext: 'Select Society',
+              value: defaultSociety,
+              items: socityData.map((e) {
+                return DropdownMenuItem(value: e.title, child: Text(e.title));
+              }).toList(),
+              callback: (newValue) {
+                setState(() {
+                  pdfData = '';
+                  defaultSociety = newValue;
+                  sendsocitydata = socityData
+                      .where((element) => element.title == defaultSociety)
+                      .toList();
+                  if (sendsocitydata[0].nameFile != null) {
+                    pdfData = sendsocitydata[0].nameFile;
+                  }
+                });
+              },
             ),
-          ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
-                child: const Text(
-                  'Select Booth:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(15),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    hint: const Text('Select Booth'),
-                    value: defaultBooth,
-                    isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: boothData.map((items) {
-                      return DropdownMenuItem(
-                          value: items.title, child: Text(items.title));
-                    }).toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        defaultBooth = newValue;
-                        booth = boothData
-                            .where((element) => element.title == defaultBooth)
-                            .toList();
-                        boothLocation = booth[0].pollingLocation;
-                        boothNumber = booth[0].pollingNumber;
-                        fetchSocity();
-                      });
-                    },
-                    onTap: () {},
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 12.w, top: 10.h),
+                  child: const Text(
+                    'Selected Booth Address',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
-                child: const Text(
-                  'Selected Booth Address:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.w),
-                  border: Border.all(color: Colors.black, width: 2.w),
-                ),
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(boothLocation ?? ''),
-                      Text(
-                        boothNumber ?? '',
-                      ),
-                    ],
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.w),
+                    border: Border.all(color: Colors.black, width: 2.w),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(boothLocation ?? ''),
+                        Text(
+                          boothNumber ?? '',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
-                child: const Text(
-                  'Select Society:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(15),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    hint: const Text('Select Society'),
-                    value: defaultSociety,
-                    isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: socityData.map((items) {
-                      return DropdownMenuItem(
-                          value: items.title, child: Text(items.title));
-                    }).toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        pdfData = '';
-                        defaultSociety = newValue;
-                        sendsocitydata = socityData
-                            .where((element) => element.title == defaultSociety)
-                            .toList();
-                        if (sendsocitydata[0].nameFile != null) {
-                          pdfData = sendsocitydata[0].nameFile;
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Signinbutton(
-            text: 'See Voters',
-            maincolor: Colors.blue,
-            Callback: () async {
-              if(assembly.isEmpty)
-                {
+              ],
+            ),
+            SignInButton(
+              text: 'See Voters',
+              maincolor: Colors.blue,
+              callback: () async {
+                if (assembly.isEmpty) {
                   Fluttertoast.showToast(msg: 'Assembly Not Selected');
                   return;
                 }
-              if(booth.isEmpty)
-              {
-                Fluttertoast.showToast(msg: 'Booth Not Selected');
-                return;
-              }
-              if(sendsocitydata.isEmpty)
-              {
-                Fluttertoast.showToast(msg: 'Society Not Selected');
-                return;
-              }
-              await kSharedPreferences.setStringList('AllId',<String>[assembly[0].id.toString(),booth[0].id.toString(),sendsocitydata[0].id.toString()]);
-              Navigator.push(context, RotationRoute(page: pdfviweer(pdf: pdfData,)));
-            },
-          ),
-          Signinbutton(
-            text: 'Clear All',
-            maincolor: Colors.blue,
-            Callback: () {
-              boothData.clear();
-              boothLocation = '';
-              boothNumber = '';
-              socityData.clear();
-              setState(() {});
-            },
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            Container(
-              height: 100.h,
-              child: DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Voter Management Service',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.sp,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('All Voters List'),
-              onTap: () {
-                Navigator.of(context).pop();
+                if (booth.isEmpty) {
+                  Fluttertoast.showToast(msg: 'Booth Not Selected');
+                  return;
+                }
+                if (sendsocitydata.isEmpty) {
+                  print(sendsocitydata);
+                  Fluttertoast.showToast(msg: 'Society Not Selected');
+                  return;
+                }
+                await kSharedPreferences.setStringList('AllId', <String>[
+                  assembly[0].id.toString(),
+                  booth[0].id.toString(),
+                  sendsocitydata[0].id.toString()
+                ]);
                 Navigator.push(
-                    context, RotationRoute(page: const GetAllVoter()));
-              },
-            ),
-            ListTile(
-              title: const Text('search society'),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context, RotationRoute(page: const SeachSociety()));
-              },
-            ),
-            ListTile(
-              title: const Text('Mark Society Completed'),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context, RotationRoute(page: const SocietyCompleted()));
+                    context,
+                    RotationRoute(
+                        page: PdfViewer(
+                      pdf: pdfData,
+                    )));
               },
             ),
           ],
+        ),
+        drawer: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              Container(
+                height: 100.h,
+                child: DrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Text(
+                    'Voter Management Service',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.sp,
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                title: const Text('Home'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('All Voters List'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context, RotationRoute(page: const GetAllVoter()));
+                },
+              ),
+              ListTile(
+                title: const Text('search society'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context, RotationRoute(page: const SeachSociety()));
+                },
+              ),
+              ListTile(
+                title: const Text('Mark Society Completed'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context, RotationRoute(page: const SocietyCompleted()));
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

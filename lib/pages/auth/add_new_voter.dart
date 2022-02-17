@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../constants/global.dart';
 
 
-class AddVooterModel {
+class AddVoterModel {
   int assembly;
   int booth;
   int society;
@@ -20,7 +20,7 @@ class AddVooterModel {
   int age;
   String gender;
 
-  AddVooterModel(
+  AddVoterModel(
       {this.assembly,
       this.booth,
       this.society,
@@ -31,7 +31,7 @@ class AddVooterModel {
       this.age,
       this.gender});
 
-  AddVooterModel.fromJson(Map<String, dynamic> json) {
+  AddVoterModel.fromJson(Map<String, dynamic> json) {
     assembly = json['assembly'];
     booth = json['booth'];
     society = json['society'];
@@ -58,14 +58,14 @@ class AddVooterModel {
   }
 }
 
-class Signup extends StatefulWidget {
-  const Signup({Key key}) : super(key: key);
+class AddNewVoter extends StatefulWidget {
+  const AddNewVoter({Key key}) : super(key: key);
 
   @override
-  _SignupState createState() => _SignupState();
+  _AddNewVoterState createState() => _AddNewVoterState();
 }
 
-class _SignupState extends State<Signup> {
+class _AddNewVoterState extends State<AddNewVoter> {
 
 
   void addVoter() async {
@@ -232,11 +232,11 @@ class _SignupState extends State<Signup> {
                 ),
                 Padding(
                   padding:  EdgeInsets.all(8.0.w),
-                  child: Signinbutton(
+                  child: SignInButton(
                     text: 'Add Voter',
                     icon: Icons.arrow_forward,
                     maincolor: Colors.blue,
-                    Callback: () {
+                    callback: () {
                       addVoter();
                     },
                   ),

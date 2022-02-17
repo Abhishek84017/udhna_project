@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
-class Signinbutton extends StatelessWidget {
+class SignInButton extends StatelessWidget {
   final String text;
   final IconData icon;
   final Color maincolor;
-  final VoidCallback Callback;
+  final VoidCallback callback;
 
-  const Signinbutton(
-      {Key key, this.text, this.icon, this.maincolor, this.Callback})
+  const SignInButton(
+      {Key key, this.text, this.icon, this.maincolor, this.callback})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class Signinbutton extends StatelessWidget {
           style: TextButton.styleFrom(
               backgroundColor: Colors.blue
           ),
-          onPressed: Callback,
+          onPressed: callback,
           child: Row(
             children: [
               Expanded(

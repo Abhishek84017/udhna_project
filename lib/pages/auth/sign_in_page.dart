@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:avt_yuwas/constants/global.dart';
 import 'package:avt_yuwas/pages/auth/forget_password.dart';
 import 'package:avt_yuwas/mainscreens/homescreen.dart';
 import 'package:avt_yuwas/pages/widgets/pageroute.dart';
+import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,19 +36,20 @@ class LoginModel {
   }
 }
 
-class Signin extends StatefulWidget {
-  const Signin({Key key}) : super(key: key);
+class SignIn extends StatefulWidget {
+  const SignIn({Key key}) : super(key: key);
 
   @override
-  _SigninState createState() => _SigninState();
+  _SignInState createState() => _SignInState();
 }
 
-class _SigninState extends State<Signin> {
+class _SignInState extends State<SignIn> {
   final TextEditingController _Email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
   //LoginModel user;
   Future<LoginModel> checklogin() async {
+
     var data = <String, dynamic>{
       "username": _Email.text,
       "password": _password.text,
@@ -67,6 +70,7 @@ class _SigninState extends State<Signin> {
       //print(user.username);
       if (jsonData['status'] == 'true') {
         Navigator.push(context, RotationRoute(page: const HomeScreen()));
+        await kSharedPreferences.setString('mobile', _Email.text);
       } else {
         Fluttertoast.showToast(
             msg: 'Username or password wrong', backgroundColor: Colors.red);
@@ -140,10 +144,10 @@ class _SigninState extends State<Signin> {
                         },
                       ),
                     )),
-                Signinbutton(
+                SignInButton(
                   text: 'Login',
                   maincolor: Colors.blue,
-                  Callback: () {
+                  callback: () {
                     checklogin();
                   },
                 ),
@@ -155,6 +159,3 @@ class _SigninState extends State<Signin> {
     ));
   }
 }
-
-
-

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,12 +17,12 @@ class AssemblyModel {
 
   AssemblyModel(
       {this.id,
-      this.title,
-      this.status,
-      this.inserted,
-      this.insertedBy,
-      this.modified,
-      this.modifiedBy});
+        this.title,
+        this.status,
+        this.inserted,
+        this.insertedBy,
+        this.modified,
+        this.modifiedBy});
 
   AssemblyModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -251,9 +252,11 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
           msg: 'Selected Society Completed', backgroundColor: Colors.black);
       boothLocation = '';
       boothNumber = '';
-      assemblyData.clear();
       boothData.clear();
       socityData.clear();
+      assembly.clear();
+      booth.clear();
+      sendsocitydata.clear();
     }
     setState(() {});
   }
@@ -272,107 +275,76 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Container(
-              margin: const EdgeInsets.only(left: 15),
-              width: double.infinity,
-              child: const Text(
-                'Select Assembly:',
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
+          DropDownButtonWidget(
+            value: defaultAssembly,
+            hinttext: 'Select Assembly',
+            items: assemblyData.map((eas) {
+              return DropdownMenuItem(value: eas.title, child: Text(eas.title));
+            }).toList(),
+            callback: (newValue) {
+              setState(() {
+                defaultAssembly = newValue;
+                assembly = assemblyData
+                    .where((element) => element.title == defaultAssembly)
+                    .toList();
+                boothData.clear();
+                booth.clear();
+                socityData.clear();
+                sendsocitydata.clear();
+                boothLocation = '';
+                boothNumber = '';
+                fetchBooth();
+              });
+            },
           ),
-          Container(
-            margin: const EdgeInsets.all(15),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text('Select Assembly'),
-                value: defaultAssembly,
-                isDense: false,
-                isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                iconSize: 30,
-                items: assemblyData.map((items) {
-                  return DropdownMenuItem(
-                      value: items.title, child: Text(items.title));
-                }).toList(),
-                onChanged: (String newValue) {
-                  setState(() {
-                    defaultAssembly = newValue;
-                    assembly = assemblyData
-                        .where((element) => element.title == defaultAssembly)
-                        .toList();
-                    boothLocation = '';
-                    boothNumber = '';
-                    socityData.clear();
-                    fetchBooth();
-                  });
-                },
-              ),
-            ),
+          DropDownButtonWidget(
+            hinttext: 'Select booth',
+            value: defaultBooth,
+            items: boothData.map((item) {
+              return DropdownMenuItem(
+                  value: item.title, child: Text(item.title));
+            }).toList(),
+            callback: (newValue) {
+              setState(() {
+                defaultBooth = newValue;
+                booth = boothData
+                    .where((element) => element.title == defaultBooth)
+                    .toList();
+                boothLocation = booth[0].pollingLocation;
+                boothNumber = booth[0].pollingNumber;
+                socityData.clear();
+                sendsocitydata.clear();
+                fetchSocity();
+              });
+
+            },
           ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
-                child: const Text(
-                  'Select Booth:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(15),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    hint: const Text('Select Booth'),
-                    value: defaultBooth,
-                    isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: boothData.map((items) {
-                      return DropdownMenuItem(
-                          value: items.title, child: Text(items.title));
-                    }).toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        defaultBooth = newValue;
-                        booth = boothData
-                            .where((element) => element.title == defaultBooth)
-                            .toList();
-                        boothLocation = booth[0].pollingLocation;
-                        boothNumber = booth[0].pollingNumber;
-                        fetchSocity();
-                      });
-                    },
-                    onTap: () {},
-                  ),
-                ),
-              ),
-            ],
+          DropDownButtonWidget(
+            hinttext: 'Select Society',
+            value: defaultSociety,
+            items: socityData.map((e) {
+              return DropdownMenuItem(value: e.title, child: Text(e.title));
+            }).toList(),
+            callback: (newValue) {
+              setState(() {
+                defaultSociety = newValue;
+                sendsocitydata = socityData
+                    .where((element) => element.title == defaultSociety)
+                    .toList();
+                if (sendsocitydata[0].nameFile != null) {
+                  societyCompletedId = sendsocitydata[0].id;
+                }
+              });
+            },
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
+              Padding(
+                padding: EdgeInsets.only(left: 12.w, top: 10.h),
                 child: const Text(
-                  'Selected Booth Address:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
+                  'Selected Booth Address',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               Container(
@@ -384,7 +356,7 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
                 ),
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -398,55 +370,22 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
               ),
             ],
           ),
-          Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                width: double.infinity,
-                child: const Text(
-                  'Select Society:',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(15),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    hint: const Text('Select Society'),
-                    value: defaultSociety,
-                    isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: socityData.map((items) {
-                      return DropdownMenuItem(
-                          value: items.title, child: Text(items.title));
-                    }).toList(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        defaultSociety = newValue;
-                        sendsocitydata = socityData
-                            .where((element) => element.title == defaultSociety)
-                            .toList();
-                        if (sendsocitydata[0].nameFile != null) {
-                          societyCompletedId = sendsocitydata[0].id;
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Signinbutton(
+          SignInButton(
             text: 'Make Society Completed',
             maincolor: Colors.blue,
-            Callback: () {
+            callback: () {
+              if (assembly.isEmpty) {
+                Fluttertoast.showToast(msg: 'Assembly Not Selected');
+                return;
+              }
+              if (booth.isEmpty) {
+                Fluttertoast.showToast(msg: 'Booth Not Selected');
+                return;
+              }
+              if (sendsocitydata.isEmpty) {
+                Fluttertoast.showToast(msg: 'Society Not Selected');
+                return;
+              }
               completed();
             },
           ),

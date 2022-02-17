@@ -30,11 +30,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               onEditingcomplete: () => FocusScope.of(context).nextFocus(),
               obscureText: false,
             ),
-            Signinbutton(
+            SignInButton(
               text: 'Forget Password',
               maincolor: Colors.blue,
-              Callback: () {
-                Navigator.push(context, RotationRoute(page: const Signin()));
+              callback: () {
+                Navigator.push(context, RotationRoute(page: const SignIn()));
               },
             ),
           ],
