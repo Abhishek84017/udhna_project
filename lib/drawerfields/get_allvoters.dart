@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -139,7 +138,7 @@ class _GetAllVoterState extends State<GetAllVoter> {
               shape:  RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(6.w))
               ),
-              child: ListTile(
+              child: ExpansionTile(
                 leading: Text(item.id.toString() ?? ''),
                 title: Text(item.name ?? ''),
                 subtitle: Text(item.regNumber ?? ''),
