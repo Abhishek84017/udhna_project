@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:avt_yuwas/constants/global.dart';
 import 'package:avt_yuwas/pages/auth/forget_password.dart';
 import 'package:avt_yuwas/mainscreens/homescreen.dart';
+import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
 import 'package:avt_yuwas/pages/widgets/pageroute.dart';
 import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:avt_yuwas/pages/widgets/text_field.dart';
@@ -47,9 +48,10 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _Email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
+
+  bool islogin = true;
   //LoginModel user;
   Future<LoginModel> checklogin() async {
-
     var data = <String, dynamic>{
       "username": _Email.text,
       "password": _password.text,
@@ -73,7 +75,10 @@ class _SignInState extends State<SignIn> {
         await kSharedPreferences.setString('mobile', _Email.text);
       } else {
         Fluttertoast.showToast(
-            msg: 'Username or password wrong', backgroundColor: Colors.red);
+            msg: jsonData['message'], backgroundColor: Colors.red);
+        setState(() {
+          islogin = true;
+        });
       }
       return LoginModel.fromJson(jsonData);
     }
@@ -125,7 +130,7 @@ class _SignInState extends State<SignIn> {
                   onEditingcomplete: () => FocusScope.of(context).unfocus(),
                   obscureText: true,
                 ),
-                Align(
+                /*Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
                       padding: EdgeInsets.only(right: 25.w),
@@ -143,14 +148,41 @@ class _SignInState extends State<SignIn> {
                               RotationRoute(page: const ForgetPassword()));
                         },
                       ),
-                    )),
-                SignInButton(
+                    )),*/
+                SizedBox(height:10.h,),
+              islogin == true ?   Padding(
+                padding:  EdgeInsets.all(8.0.w),
+                child: SignInButton(
                   text: 'Login',
-                  maincolor: Colors.blue,
+                    maincolor: Colors.blue,
                   callback: () {
-                    checklogin();
-                  },
-                ),
+                    if(_password.text.isEmpty && _Email.text.isEmpty)
+                    {
+                      Fluttertoast.showToast(msg: 'Username or Password Required');
+                      return;
+                    }
+                    if(_Email.text.isEmpty)
+                      {
+                        Fluttertoast.showToast(msg: 'Username Required');
+                        return;
+                      }
+                    if(_password.text.isEmpty)
+                    {
+                      Fluttertoast.showToast(msg: 'Password Required');
+                      return;
+                    }
+                    if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$").hasMatch(_Email.text)) {
+                      Fluttertoast.showToast(
+                          msg: 'Invalid mobile number', backgroundColor: Colors.red);
+                      return;
+                    }
+                      setState(() {
+                        islogin = false;
+                      });
+                      checklogin();
+                    },
+                  ),
+              ) : const CircularIndicator()
               ],
             ),
           ),

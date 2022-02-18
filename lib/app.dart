@@ -1,13 +1,12 @@
 import 'package:avt_yuwas/constants/global.dart';
 import 'package:avt_yuwas/mainscreens/homescreen.dart';
 import 'package:avt_yuwas/pages/auth/sign_in_page.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 class MyApp extends StatefulWidget {
   const MyApp({Key key}) : super(key: key);
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -19,7 +18,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     getValidationData();
   }
 
@@ -40,7 +38,7 @@ class _MyAppState extends State<MyApp> {
           return child;
         });
       },
-      home: finalData == null ? const SignIn() : const HomeScreen(),
+      home: finalData == null ? const SignIn() : const HomeScreen()
     ));
   }
 }

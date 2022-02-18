@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
 import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
 import 'package:avt_yuwas/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -78,18 +79,21 @@ class _AddNewVoterState extends State<AddNewVoter> {
         genderValue.isEmpty) {
       Fluttertoast.showToast(
           msg: 'All fields are requiredd', backgroundColor: Colors.red);
+      addvoter = true;
       return;
     }
 
     if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$").hasMatch(_mobile.text)) {
       Fluttertoast.showToast(
           msg: 'Invalid mobile number', backgroundColor: Colors.red);
+      addvoter = true;
       return;
     }
     var b = int.parse(_age.text);
     if(b < 18 )
       {
         Fluttertoast.showToast(msg: 'Age must be 18',backgroundColor: Colors.black);
+        addvoter = true;
         return;
       }
     var data = <String, dynamic>{
@@ -110,7 +114,9 @@ class _AddNewVoterState extends State<AddNewVoter> {
 
     try {
       if (response.statusCode == 200) {
-
+        setState(() {
+          addvoter = true;
+        });
         Fluttertoast.showToast(
             msg: 'New Vooter ADDED', backgroundColor: Colors.black);
         _vottername.clear();
@@ -135,6 +141,8 @@ class _AddNewVoterState extends State<AddNewVoter> {
   final TextEditingController _age = TextEditingController();
 
   String genderValue = '';
+
+  bool addvoter = true;
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +196,7 @@ class _AddNewVoterState extends State<AddNewVoter> {
                   text: 'Age',
                   controller: _age,
                   keyboardtype: TextInputType.number,
-                  onEditingcomplete: () => FocusScope.of(context).nextFocus(),
+                  onEditingcomplete: () => FocusScope.of(context).unfocus(),
                   obscureText: false,
                 ),
                 Container(
@@ -230,17 +238,20 @@ class _AddNewVoterState extends State<AddNewVoter> {
                     ),
                   ),
                 ),
-                Padding(
+             addvoter == true ?   Padding(
                   padding:  EdgeInsets.all(8.0.w),
                   child: SignInButton(
                     text: 'Add Voter',
                     icon: Icons.arrow_forward,
                     maincolor: Colors.blue,
                     callback: () {
+                      setState(() {
+                        addvoter = false;
+                      });
                       addVoter();
                     },
                   ),
-                ),
+                ) : const CircularIndicator()
               ],
             ),
           ),

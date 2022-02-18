@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
 import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,12 +18,12 @@ class AssemblyModel {
 
   AssemblyModel(
       {this.id,
-        this.title,
-        this.status,
-        this.inserted,
-        this.insertedBy,
-        this.modified,
-        this.modifiedBy});
+      this.title,
+      this.status,
+      this.inserted,
+      this.insertedBy,
+      this.modified,
+      this.modifiedBy});
 
   AssemblyModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -183,6 +184,12 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
   String boothNumber;
   int societyCompletedId;
 
+  bool isassembly = true;
+  bool isbooth;
+  bool issociety;
+  bool iscompletedsociety = true;
+
+
   void fetchAssembly() async {
     final response = await http.get(
         Uri.parse('https://www.votersmanagement.com/api/get-all-assembly'));
@@ -196,13 +203,16 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
       if (assemblyData.isNotEmpty) {
         defaultAssembly = assemblyData.first.title;
       }
-      setState(() {});
+      setState(() {
+        isassembly = false;
+      });
     }
   }
 
   void fetchBooth() async {
+    isbooth = true;
     boothData.clear();
-    print(assembly[0].id);
+
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
@@ -212,8 +222,9 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
           boothData.add(BoothModel.fromJson(v));
         });
       }
-      print(boothData.map((e) => e.title).toList());
+
       setState(() {
+        isbooth = false;
         if (boothData.isNotEmpty) {
           defaultBooth = boothData.first.title;
         }
@@ -222,6 +233,7 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
   }
 
   void fetchSocity() async {
+    issociety = true;
     socityData.clear();
     final response = await http.get(Uri.parse(
         'https://votersmanagement.com/api/get-booth-society/${booth[0].id}'));
@@ -233,6 +245,7 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
         });
       }
       setState(() {
+        issociety = false;
         if (socityData.isNotEmpty) {
           defaultSociety = socityData.first.title;
         }
@@ -242,7 +255,6 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
 
   void completed() async {
     var data = <String, dynamic>{"society": societyCompletedId};
-
     final response = await http.post(
         Uri.https('votersmanagement.com', 'api/mark-society-completed'),
         headers: {"Content-Type": "application/json"},
@@ -258,7 +270,9 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
       booth.clear();
       sendsocitydata.clear();
     }
-    setState(() {});
+    setState(() {
+      iscompletedsociety = true;
+    });
   }
 
   @override
@@ -275,68 +289,69 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
       ),
       body: Column(
         children: [
-          DropDownButtonWidget(
-            value: defaultAssembly,
-            hinttext: 'Select Assembly',
-            items: assemblyData.map((eas) {
-              return DropdownMenuItem(value: eas.title, child: Text(eas.title));
-            }).toList(),
-            callback: (newValue) {
-              setState(() {
-                defaultAssembly = newValue;
-                assembly = assemblyData
-                    .where((element) => element.title == defaultAssembly)
-                    .toList();
-                boothData.clear();
-                booth.clear();
-                socityData.clear();
-                sendsocitydata.clear();
-                boothLocation = '';
-                boothNumber = '';
-                fetchBooth();
-              });
-            },
-          ),
-          DropDownButtonWidget(
-            hinttext: 'Select booth',
-            value: defaultBooth,
-            items: boothData.map((item) {
-              return DropdownMenuItem(
-                  value: item.title, child: Text(item.title));
-            }).toList(),
-            callback: (newValue) {
-              setState(() {
-                defaultBooth = newValue;
-                booth = boothData
-                    .where((element) => element.title == defaultBooth)
-                    .toList();
-                boothLocation = booth[0].pollingLocation;
-                boothNumber = booth[0].pollingNumber;
-                socityData.clear();
-                sendsocitydata.clear();
-                fetchSocity();
-              });
-
-            },
-          ),
-          DropDownButtonWidget(
-            hinttext: 'Select Society',
-            value: defaultSociety,
-            items: socityData.map((e) {
-              return DropdownMenuItem(value: e.title, child: Text(e.title));
-            }).toList(),
-            callback: (newValue) {
-              setState(() {
-                defaultSociety = newValue;
-                sendsocitydata = socityData
-                    .where((element) => element.title == defaultSociety)
-                    .toList();
-                if (sendsocitydata[0].nameFile != null) {
-                  societyCompletedId = sendsocitydata[0].id;
-                }
-              });
-            },
-          ),
+          isassembly == true ? const CircularIndicator() : DropDownButtonWidget(
+                  value: defaultAssembly,
+                  hinttext: 'Select Assembly',
+                  items: assemblyData.map((eas) {
+                    return DropdownMenuItem(
+                        value: eas.title, child: Text(eas.title));
+                  }).toList(),
+                  callback: (newValue) {
+                    setState(() {
+                      defaultAssembly = newValue;
+                      assembly = assemblyData
+                          .where((element) => element.title == defaultAssembly)
+                          .toList();
+                      boothData.clear();
+                      booth.clear();
+                      socityData.clear();
+                      sendsocitydata.clear();
+                      boothLocation = '';
+                      boothNumber = '';
+                      fetchBooth();
+                    });
+                  },
+                ),
+          isbooth == true ? const CircularIndicator() : DropDownButtonWidget(
+                  hinttext: 'Select booth',
+                  value: defaultBooth,
+                  items: boothData.map((item) {
+                    return DropdownMenuItem(
+                        value: item.title, child: Text(item.title));
+                  }).toList(),
+                  callback: (newValue) {
+                    setState(() {
+                      defaultBooth = newValue;
+                      booth = boothData
+                          .where((element) => element.title == defaultBooth)
+                          .toList();
+                      boothLocation = booth[0].pollingLocation;
+                      boothNumber = booth[0].pollingNumber;
+                      socityData.clear();
+                      sendsocitydata.clear();
+                      fetchSocity();
+                    });
+                  },
+                ),
+          issociety == true ? const CircularIndicator() : DropDownButtonWidget(
+                  hinttext: 'Select Society',
+                  value: defaultSociety,
+                  items: socityData.map((e) {
+                    return DropdownMenuItem(
+                        value: e.title, child: Text(e.title));
+                  }).toList(),
+                  callback: (newValue) {
+                    setState(() {
+                      defaultSociety = newValue;
+                      sendsocitydata = socityData
+                          .where((element) => element.title == defaultSociety)
+                          .toList();
+                      if (sendsocitydata[0].title != null) {
+                        societyCompletedId = sendsocitydata[0].id;
+                      }
+                    });
+                  },
+                ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -356,7 +371,7 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
                 ),
                 child: Padding(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -370,7 +385,7 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
               ),
             ],
           ),
-          SignInButton(
+       iscompletedsociety == true ?  SignInButton(
             text: 'Make Society Completed',
             maincolor: Colors.blue,
             callback: () {
@@ -386,9 +401,12 @@ class _SocietyCompletedState extends State<SocietyCompleted> {
                 Fluttertoast.showToast(msg: 'Society Not Selected');
                 return;
               }
-              completed();
+              setState(() {
+                iscompletedsociety = false;
+              });
+           completed();
             },
-          ),
+          ) : const CircularIndicator()
         ],
       ),
     );

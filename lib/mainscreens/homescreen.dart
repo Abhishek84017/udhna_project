@@ -3,6 +3,7 @@ import 'package:avt_yuwas/drawerfields/get_allvoters.dart';
 import 'package:avt_yuwas/constants/global.dart';
 import 'package:avt_yuwas/drawerfields/make_socity_complteted.dart';
 import 'package:avt_yuwas/drawerfields/seachsociety.dart';
+import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
 import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,7 @@ import '../pages/widgets/pageroute.dart';
 import 'pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import '../constants/global.dart';
+
 
 class AssemblyModel {
   int id;
@@ -190,6 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String boothNumber;
   String pdfData;
 
+  bool isassembly = true;
+  bool isbooth;
+  bool issociety;
+
   void fetchAssembly() async {
     final response = await http.get(
         Uri.parse('https://www.votersmanagement.com/api/get-all-assembly'));
@@ -203,13 +209,15 @@ class _HomeScreenState extends State<HomeScreen> {
       if (assemblyData.isNotEmpty) {
         defaultAssembly = assemblyData.first.title;
       }
-      setState(() {});
+      setState(() {
+        isassembly = false;
+      });
     }
   }
 
   void fetchBooth() async {
+     isbooth = true;
     boothData.clear();
-
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
     if (response.statusCode == 200) {
@@ -220,14 +228,20 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
       setState(() {
+        isbooth = false;
         if (boothData.isNotEmpty) {
           defaultBooth = boothData.first.title;
         }
+        else
+          {
+            Fluttertoast.showToast(msg: 'No Booth Added On This Assembly');
+          }
       });
     }
   }
 
   void fetchSocity() async {
+    issociety = true;
     socityData.clear();
     final response = await http.get(Uri.parse(
         'https://votersmanagement.com/api/get-booth-society/${booth[0].id}'));
@@ -239,9 +253,14 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
       setState(() {
+        issociety = false;
         if (socityData.isNotEmpty) {
           defaultSociety = socityData.first.title;
         }
+        else
+          {
+              Fluttertoast.showToast(msg: 'No Society Added on This Booth');
+          }
       });
     }
   }
@@ -281,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Column(
           children: [
-            DropDownButtonWidget(
+          isassembly == true ? const CircularIndicator() : DropDownButtonWidget(
               value: defaultAssembly,
               hinttext: 'Select Assembly',
               items: assemblyData.map((eas) {
@@ -303,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            DropDownButtonWidget(
+           isbooth == true ? const CircularIndicator()   : DropDownButtonWidget(
               hinttext: 'Select booth',
               value: defaultBooth,
               items: boothData.map((item) {
@@ -324,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            DropDownButtonWidget(
+           issociety == true ? const CircularIndicator() : DropDownButtonWidget(
               hinttext: 'Select Society',
               value: defaultSociety,
               items: socityData.map((e) {
