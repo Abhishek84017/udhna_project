@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:avt_yuwas/constants/global.dart';
-import 'package:avt_yuwas/pages/auth/forget_password.dart';
 import 'package:avt_yuwas/mainscreens/homescreen.dart';
 import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
 import 'package:avt_yuwas/pages/widgets/pageroute.dart';

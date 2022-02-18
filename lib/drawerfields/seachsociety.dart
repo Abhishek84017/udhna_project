@@ -1,6 +1,7 @@
+import 'package:avt_yuwas/constants/urls.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
 
 class SeachSociety extends StatefulWidget {
   const SeachSociety({Key key}) : super(key: key);
@@ -22,7 +23,7 @@ class _SeachSocietyState extends State<SeachSociety> {
         children: [
           WebView(
             zoomEnabled: true,
-            initialUrl: 'https://www.votersmanagement.com/',
+            initialUrl: Urls.BASE_URL,
             javascriptMode: JavascriptMode.unrestricted,
             onPageStarted: (finish) {
               setState(() {
