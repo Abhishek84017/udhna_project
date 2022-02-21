@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
-import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
+import 'package:voter_management/pages/widgets/circularindicator.dart';
+import 'package:voter_management/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';

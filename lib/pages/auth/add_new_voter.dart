@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
-import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
-import 'package:avt_yuwas/pages/widgets/text_field.dart';
+import 'package:voter_management/pages/widgets/circularindicator.dart';
+import 'package:voter_management/pages/widgets/signinbutton.dart';
+import 'package:voter_management/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;

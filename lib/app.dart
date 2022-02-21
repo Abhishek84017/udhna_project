@@ -1,6 +1,6 @@
-import 'package:avt_yuwas/constants/global.dart';
-import 'package:avt_yuwas/mainscreens/homescreen.dart';
-import 'package:avt_yuwas/pages/auth/sign_in_page.dart';
+import 'package:voter_management/constants/global.dart';
+import 'package:voter_management/mainscreens/homescreen.dart';
+import 'package:voter_management/pages/auth/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

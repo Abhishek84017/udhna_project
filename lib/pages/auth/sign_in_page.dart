@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:avt_yuwas/constants/global.dart';
-import 'package:avt_yuwas/mainscreens/homescreen.dart';
-import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
-import 'package:avt_yuwas/pages/widgets/pageroute.dart';
-import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
-import 'package:avt_yuwas/pages/widgets/text_field.dart';
+import 'package:voter_management/constants/global.dart';
+import 'package:voter_management/mainscreens/homescreen.dart';
+import 'package:voter_management/pages/widgets/circularindicator.dart';
+import 'package:voter_management/pages/widgets/pageroute.dart';
+import 'package:voter_management/pages/widgets/signinbutton.dart';
+import 'package:voter_management/pages/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/signinbutton.dart';
@@ -47,8 +47,8 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _Email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-
   bool islogin = true;
+
   //LoginModel user;
   Future<LoginModel> checklogin() async {
     var data = <String, dynamic>{
@@ -70,7 +70,7 @@ class _SignInState extends State<SignIn> {
       //user = LoginModel.fromJson(jsonData);
       //print(user.username);
       if (jsonData['status'] == 'true') {
-        Navigator.push(context, RotationRoute(page: const HomeScreen()));
+        Navigator.pushReplacement(context, RotationRoute(page: const HomeScreen()));
         await kSharedPreferences.setString('mobile', _Email.text);
       } else {
         Fluttertoast.showToast(
@@ -82,6 +82,7 @@ class _SignInState extends State<SignIn> {
       return LoginModel.fromJson(jsonData);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -148,40 +149,44 @@ class _SignInState extends State<SignIn> {
                         },
                       ),
                     )),*/
-                SizedBox(height:10.h,),
-              islogin == true ?   Padding(
-                padding:  EdgeInsets.all(8.0.w),
-                child: SignInButton(
-                  text: 'Login',
-                    maincolor: Colors.blue,
-                  callback: () {
-                    if(_password.text.isEmpty && _Email.text.isEmpty)
-                    {
-                      Fluttertoast.showToast(msg: 'Username or Password Required');
-                      return;
-                    }
-                    if(_Email.text.isEmpty)
-                      {
-                        Fluttertoast.showToast(msg: 'Username Required');
-                        return;
-                      }
-                    if(_password.text.isEmpty)
-                    {
-                      Fluttertoast.showToast(msg: 'Password Required');
-                      return;
-                    }
-                    if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$").hasMatch(_Email.text)) {
-                      Fluttertoast.showToast(
-                          msg: 'Invalid mobile number', backgroundColor: Colors.red);
-                      return;
-                    }
-                      setState(() {
-                        islogin = false;
-                      });
-                      checklogin();
-                    },
-                  ),
-              ) : const CircularIndicator()
+                SizedBox(
+                  height: 10.h,
+                ),
+                islogin == true
+                    ? Padding(
+                        padding: EdgeInsets.all(8.0.w),
+                        child: SignInButton(
+                          text: 'Login',
+                          maincolor: Colors.blue,
+                          callback: () {
+                            if (_password.text.isEmpty && _Email.text.isEmpty) {
+                              Fluttertoast.showToast(
+                                  msg: 'Username or Password Required');
+                              return;
+                            }
+                            if (_Email.text.isEmpty) {
+                              Fluttertoast.showToast(msg: 'Username Required');
+                              return;
+                            }
+                            if (_password.text.isEmpty) {
+                              Fluttertoast.showToast(msg: 'Password Required');
+                              return;
+                            }
+                            if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$")
+                                .hasMatch(_Email.text)) {
+                              Fluttertoast.showToast(
+                                  msg: 'Invalid mobile number',
+                                  backgroundColor: Colors.red);
+                              return;
+                            }
+                            setState(() {
+                              islogin = false;
+                            });
+                            checklogin();
+                          },
+                        ),
+                      )
+                    : const CircularIndicator()
               ],
             ),
           ),

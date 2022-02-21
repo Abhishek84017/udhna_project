@@ -1,8 +1,8 @@
-import 'package:avt_yuwas/pages/widgets/pageroute.dart';
-import 'package:avt_yuwas/pages/auth/sign_in_page.dart';
-import 'package:avt_yuwas/pages/widgets/signinbutton.dart';
+import 'package:voter_management/pages/widgets/pageroute.dart';
+import 'package:voter_management/pages/auth/sign_in_page.dart';
+import 'package:voter_management/pages/widgets/signinbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:avt_yuwas/pages/widgets/text_field.dart';
+import 'package:voter_management/pages/widgets/text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ForgetPassword extends StatefulWidget {

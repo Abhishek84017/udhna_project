@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:avt_yuwas/drawerfields/get_allvoters.dart';
-import 'package:avt_yuwas/constants/global.dart';
-import 'package:avt_yuwas/drawerfields/make_socity_complteted.dart';
-import 'package:avt_yuwas/drawerfields/seachsociety.dart';
-import 'package:avt_yuwas/pages/widgets/circularindicator.dart';
-import 'package:avt_yuwas/pages/widgets/dropdownbutton.dart';
+import 'package:voter_management/drawerfields/get_allvoters.dart';
+import 'package:voter_management/constants/global.dart';
+import 'package:voter_management/drawerfields/make_socity_complteted.dart';
+import 'package:voter_management/drawerfields/seachsociety.dart';
+import 'package:voter_management/pages/widgets/circularindicator.dart';
+import 'package:voter_management/pages/widgets/dropdownbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
