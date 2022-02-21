@@ -6,9 +6,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfViewer extends StatefulWidget {
   final String pdf;
-  final String rawUrl;
-
-  const PdfViewer({Key key, this.pdf, this.rawUrl}) : super(key: key);
+  const PdfViewer({Key key, this.pdf}) : super(key: key);
 
   @override
   _PdfViewerState createState() => _PdfViewerState();
@@ -19,18 +17,18 @@ class _PdfViewerState extends State<PdfViewer> {
     return await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text('Do you want to back'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    child: const Text('Yes')),
-                TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: const Text('No')),
-              ],
-            ));
+          title: const Text('Do you want to back'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: const Text('Yes')),
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('No')),
+          ],
+        ));
   }
 
   @override
@@ -47,11 +45,10 @@ class _PdfViewerState extends State<PdfViewer> {
             Expanded(
               child: widget.pdf.isEmpty
                   ? const Center(
-                      child: Text('Voters List not Found on this society'),
-                    )
-                  : SfPdfViewer.network(
-                      widget.rawUrl ?? "https://votersmanagement.com/${widget.pdf}",
-                    ),
+                child: Text('Voters List not Found on this society'),
+              )
+                  : SfPdfViewer.network("https://votersmanagement.com/${widget.pdf}",
+              ),
               //child: _isLoading ? const Center(child: CircularProgressIndicator()) : document == null ? const Center(child: Text('No Voters List Find'),) : SfPdfViewer.network(document),
             ),
             SignInButton(

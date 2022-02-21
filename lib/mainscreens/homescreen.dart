@@ -298,134 +298,136 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('Select Society'),
         ),
-        body: Column(
-          children: [
-          isassembly == true ? const CircularIndicator() : DropDownButtonWidget(
-              value: defaultAssembly,
-              hinttext: 'Select Assembly',
-              items: assemblyData.map((eas) {
-                return DropdownMenuItem(value: eas.title, child: Text(eas.title));
-              }).toList(),
-              callback: (newValue) {
-                setState(() {
-                  defaultAssembly = newValue;
-                  assembly = assemblyData
-                      .where((element) => element.title == defaultAssembly)
-                      .toList();
-                  boothData.clear();
-                  booth.clear();
-                  socityData.clear();
-                  sendsocitydata.clear();
-                  boothLocation = '';
-                  boothNumber = '';
-                  fetchBooth();
-                });
-              },
-            ),
-           isbooth == true ? const CircularIndicator()   : DropDownButtonWidget(
-              hinttext: 'Select booth',
-              value: defaultBooth,
-              items: boothData.map((item) {
-                return DropdownMenuItem(
-                    value: item.title, child: Text(item.title));
-              }).toList(),
-              callback: (newValue) {
-                setState(() {
-                  defaultBooth = newValue;
-                  booth = boothData
-                      .where((element) => element.title == defaultBooth)
-                      .toList();
-                  boothLocation = booth[0].pollingLocation;
-                  boothNumber = booth[0].pollingNumber;
-                  socityData.clear();
-                  sendsocitydata.clear();
-                  fetchSocity();
-                });
-              },
-            ),
-           issociety == true ? const CircularIndicator() : DropDownButtonWidget(
-              hinttext: 'Select Society',
-              value: defaultSociety,
-              items: socityData.map((e) {
-                return DropdownMenuItem(value: e.title, child: Text(e.title));
-              }).toList(),
-              callback: (newValue) {
-                setState(() {
-                  pdfData = '';
-                  defaultSociety = newValue;
-                  sendsocitydata = socityData
-                      .where((element) => element.title == defaultSociety)
-                      .toList();
-                  if (sendsocitydata[0].nameFile != null) {
-                    pdfData = sendsocitydata[0].nameFile;
-                  }
-                });
-              },
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 12.w, top: 10.h),
-                  child: const Text(
-                    'Selected Booth Address',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.w),
-                    border: Border.all(color: Colors.black, width: 2.w),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(boothLocation ?? ''),
-                        Text(
-                          boothNumber ?? '',
-                        ),
-                      ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+            isassembly == true ? const CircularIndicator() : DropDownButtonWidget(
+                value: defaultAssembly,
+                hinttext: 'Select Assembly',
+                items: assemblyData.map((eas) {
+                  return DropdownMenuItem(value: eas.title, child: Text(eas.title));
+                }).toList(),
+                callback: (newValue) {
+                  setState(() {
+                    defaultAssembly = newValue;
+                    assembly = assemblyData
+                        .where((element) => element.title == defaultAssembly)
+                        .toList();
+                    boothData.clear();
+                    booth.clear();
+                    socityData.clear();
+                    sendsocitydata.clear();
+                    boothLocation = '';
+                    boothNumber = '';
+                    fetchBooth();
+                  });
+                },
+              ),
+             isbooth == true ? const CircularIndicator()   : DropDownButtonWidget(
+                hinttext: 'Select booth',
+                value: defaultBooth,
+                items: boothData.map((item) {
+                  return DropdownMenuItem(
+                      value: item.title, child: Text(item.title));
+                }).toList(),
+                callback: (newValue) {
+                  setState(() {
+                    defaultBooth = newValue;
+                    booth = boothData
+                        .where((element) => element.title == defaultBooth)
+                        .toList();
+                    boothLocation = booth[0].pollingLocation;
+                    boothNumber = booth[0].pollingNumber;
+                    socityData.clear();
+                    sendsocitydata.clear();
+                    fetchSocity();
+                  });
+                },
+              ),
+             issociety == true ? const CircularIndicator() : DropDownButtonWidget(
+                hinttext: 'Select Society',
+                value: defaultSociety,
+                items: socityData.map((e) {
+                  return DropdownMenuItem(value: e.title, child: Text(e.title));
+                }).toList(),
+                callback: (newValue) {
+                  setState(() {
+                    pdfData = '';
+                    defaultSociety = newValue;
+                    sendsocitydata = socityData
+                        .where((element) => element.title == defaultSociety)
+                        .toList();
+                    if (sendsocitydata[0].nameFile != null) {
+                      pdfData = sendsocitydata[0].nameFile;
+                    }
+                  });
+                },
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 12.w, top: 10.h),
+                    child: const Text(
+                      'Selected Booth Address',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SignInButton(
-              text: 'See Voters',
-              maincolor: Colors.blue,
-              callback: () async {
-                if (assembly.isEmpty) {
-                  Fluttertoast.showToast(msg: 'Assembly Not Selected');
-                  return;
-                }
-                if (booth.isEmpty) {
-                  Fluttertoast.showToast(msg: 'Booth Not Selected');
-                  return;
-                }
-                if (sendsocitydata.isEmpty) {
-                  print(sendsocitydata);
-                  Fluttertoast.showToast(msg: 'Society Not Selected');
-                  return;
-                }
-                await kSharedPreferences.setStringList('AllId', <String>[
-                  assembly[0].id.toString(),
-                  booth[0].id.toString(),
-                  sendsocitydata[0].id.toString()
-                ]);
-                Navigator.push(
-                    context,
-                    RotationRoute(
-                        page: PdfViewer(
-                      pdf: pdfData,
-                    )));
-              },
-            ),
-          ],
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.w),
+                      border: Border.all(color: Colors.black, width: 1.5.w),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(boothLocation ?? ''),
+                          Text(
+                            boothNumber ?? '',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SignInButton(
+                text: 'See Voters',
+                maincolor: Colors.blue,
+                callback: () async {
+                  if (assembly.isEmpty) {
+                    Fluttertoast.showToast(msg: 'Assembly Not Selected');
+                    return;
+                  }
+                  if (booth.isEmpty) {
+                    Fluttertoast.showToast(msg: 'Booth Not Selected');
+                    return;
+                  }
+                  if (sendsocitydata.isEmpty) {
+
+                    Fluttertoast.showToast(msg: 'Society Not Selected');
+                    return;
+                  }
+                  await kSharedPreferences.setStringList('AllId', <String>[
+                    assembly[0].id.toString(),
+                    booth[0].id.toString(),
+                    sendsocitydata[0].id.toString()
+                  ]);
+                  Navigator.push(
+                      context,
+                      RotationRoute(
+                          page: PdfViewer(
+                        pdf: pdfData,
+                      )));
+                },
+              ),
+            ],
+          ),
         ),
         drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll

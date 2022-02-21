@@ -27,12 +27,6 @@ class DropDownButtonWidget extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w,vertical: 7.h),
-          child: Text(
-            text ?? '',
-            style: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
         ),
         SizedBox(
           height: 1.h,

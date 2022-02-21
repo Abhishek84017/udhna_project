@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voter_management/constants/urls.dart';
-import 'package:voter_management/mainscreens/pdfviewer.dart';
+import 'package:voter_management/mainscreens/webpdfviewer.dart';
 import 'package:voter_management/pages/widgets/pageroute.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -27,7 +27,8 @@ class _SeachSocietyState extends State<SeachSociety> {
             initialUrl: Urls.BASE_URL,
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (navigation) {
-              Navigator.push(context, RotationRoute(page: PdfViewer(pdf: navigation.url,)));
+              print(navigation.url);
+              Navigator.pushReplacement(context, RotationRoute(page: WebPdfViewer(webpdf: navigation.url,)));
               return NavigationDecision.prevent;
             },
             onPageStarted: (finish) {
