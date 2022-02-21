@@ -1,4 +1,4 @@
 
 class Urls{
-  static const String BASE_URL = 'https://www.votersmanagement.com/';
+  static const String baseUrl = 'https://www.votersmanagement.com/';
 }

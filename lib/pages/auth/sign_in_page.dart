@@ -27,7 +27,7 @@ class LoginModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['username'] = username;
     data['password'] = password;
     data['lat'] = lat;
@@ -44,7 +44,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final TextEditingController _Email = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
   bool islogin = true;
@@ -52,7 +52,7 @@ class _SignInState extends State<SignIn> {
   //LoginModel user;
   Future<LoginModel> checklogin() async {
     var data = <String, dynamic>{
-      "username": _Email.text,
+      "username": _email.text,
       "password": _password.text,
       "lat": "21.67645",
       "long": "23.87656"
@@ -70,8 +70,9 @@ class _SignInState extends State<SignIn> {
       //user = LoginModel.fromJson(jsonData);
       //print(user.username);
       if (jsonData['status'] == 'true') {
-        Navigator.pushReplacement(context, RotationRoute(page: const HomeScreen()));
-        await kSharedPreferences.setString('mobile', _Email.text);
+        Navigator.pushReplacement(
+            context, RotationRoute(page: const HomeScreen()));
+        await kSharedPreferences.setString('mobile', _email.text);
       } else {
         Fluttertoast.showToast(
             msg: jsonData['message'], backgroundColor: Colors.red);
@@ -83,114 +84,78 @@ class _SignInState extends State<SignIn> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 100.h),
-                  child: Text(
-                    'Manage Your Constituency',
-                    style: TextStyle(fontSize: 22.sp, color: Colors.blue),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 100.h),
-                    child: Center(
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: 'Welcome Back!\n',
-                              style: TextStyle(
-                                  color: Colors.blue, fontSize: 18.sp)),
-                          TextSpan(
-                              text: 'Login to your existing account!',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 15.sp))
-                        ]),
-                      ),
-                    )),
-                Inputtext(
-                  text: 'Mobile no',
-                  controller: _Email,
-                  keyboardtype: TextInputType.number,
-                  onEditingcomplete: () => FocusScope.of(context).nextFocus(),
-                  obscureText: false,
-                ),
-                Inputtext(
-                  text: 'Password',
-                  controller: _password,
-                  onEditingcomplete: () => FocusScope.of(context).unfocus(),
-                  obscureText: true,
-                ),
-                /*Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 25.w),
-                      child: GestureDetector(
-                        child: Text(
-                          'Forget Password!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15.sp,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(context,   sendsocitydata[0].title,
-                              RotationRoute(page: const ForgetPassword()));
-                        },
-                      ),
-                    )),*/
-                SizedBox(
-                  height: 10.h,
-                ),
-                islogin == true
-                    ? Padding(
-                        padding: EdgeInsets.all(8.0.w),
-                        child: SignInButton(
-                          text: 'Login',
-                          maincolor: Colors.blue,
-                          callback: () {
-                            if (_password.text.isEmpty && _Email.text.isEmpty) {
-                              Fluttertoast.showToast(
-                                  msg: 'Username or Password Required');
-                              return;
-                            }
-                            if (_Email.text.isEmpty) {
-                              Fluttertoast.showToast(msg: 'Username Required');
-                              return;
-                            }
-                            if (_password.text.isEmpty) {
-                              Fluttertoast.showToast(msg: 'Password Required');
-                              return;
-                            }
-                            if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$")
-                                .hasMatch(_Email.text)) {
-                              Fluttertoast.showToast(
-                                  msg: 'Invalid mobile number',
-                                  backgroundColor: Colors.red);
-                              return;
-                            }
-                            setState(() {
-                              islogin = false;
-                            });
-                            checklogin();
-                          },
-                        ),
-                      )
-                    : const CircularIndicator()
-              ],
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(children: [
+            TextSpan(
+              text: 'Manage Your Constituency\n',
+              style: TextStyle(fontSize: 22.sp, color: Colors.blue),
             ),
-          ),
+            TextSpan(
+                text: 'Welcome Back!\n',
+                style: TextStyle(color: Colors.blue, fontSize: 18.sp)),
+            TextSpan(
+                text: 'Login to your existing account!',
+                style: TextStyle(color: Colors.black, fontSize: 15.sp))
+          ]),
         ),
+        Inputtext(
+          text: 'Mobile no',
+          controller: _email,
+          keyboardtype: TextInputType.number,
+          onEditingcomplete: () => FocusScope.of(context).nextFocus(),
+          obscureText: false,
+        ),
+        Inputtext(
+          text: 'Password',
+          controller: _password,
+          onEditingcomplete: () => FocusScope.of(context).unfocus(),
+          obscureText: true,
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        islogin == true
+            ? Padding(
+                padding: EdgeInsets.all(8.0.w),
+                child: SignInButton(
+                  text: 'Login',
+                  maincolor: Colors.blue,
+                  callback: () {
+                    if (_password.text.isEmpty && _email.text.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg: 'Username or Password Required');
+                      return;
+                    }
+                    if (_email.text.isEmpty) {
+                      Fluttertoast.showToast(msg: 'Username Required');
+                      return;
+                    }
+                    if (_password.text.isEmpty) {
+                      Fluttertoast.showToast(msg: 'Password Required');
+                      return;
+                    }
+                    if (!RegExp(r"^(?:[+0]9)?[0-9]{10}$")
+                        .hasMatch(_email.text)) {
+                      Fluttertoast.showToast(
+                          msg: 'Invalid mobile number',
+                          backgroundColor: Colors.red);
+                      return;
+                    }
+                    setState(() {
+                      islogin = false;
+                    });
+                    checklogin();
+                  },
+                ),
+              )
+            : const CircularIndicator(),
       ],
     ));
   }

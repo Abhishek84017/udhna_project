@@ -1,4 +1,4 @@
-import 'package:voter_management/constants/global.dart';
+
 import 'package:voter_management/pages/widgets/pageroute.dart';
 import 'package:voter_management/pages/auth/add_new_voter.dart';
 import 'package:voter_management/pages/widgets/signinbutton.dart';

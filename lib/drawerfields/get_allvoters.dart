@@ -65,24 +65,24 @@ class GetAllVoterModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['assembly_id'] = this.assemblyId;
-    data['booth_id'] = this.boothId;
-    data['society_id'] = this.societyId;
-    data['reg_number'] = this.regNumber;
-    data['name'] = this.name;
-    data['father_name'] = this.fatherName;
-    data['house_number'] = this.houseNumber;
-    data['age'] = this.age;
-    data['gender'] = this.gender;
-    data['status'] = this.status;
-    data['inserted'] = this.inserted;
-    data['inserted_by'] = this.insertedBy;
-    data['modified'] = this.modified;
-    data['modified_by'] = this.modifiedBy;
-    data['entry_boy_id'] = this.entryBoyId;
-    data['society'] = this.society;
+    final Map<String, dynamic> data =  <String, dynamic>{};
+    data['id'] = id;
+    data['assembly_id'] = assemblyId;
+    data['booth_id'] = boothId;
+    data['society_id'] = societyId;
+    data['reg_number'] = regNumber;
+    data['name'] = name;
+    data['father_name'] = fatherName;
+    data['house_number'] = houseNumber;
+    data['age'] = age;
+    data['gender'] = gender;
+    data['status'] = status;
+    data['inserted'] = inserted;
+    data['inserted_by'] = insertedBy;
+    data['modified'] = modified;
+    data['modified_by'] = modifiedBy;
+    data['entry_boy_id'] = entryBoyId;
+    data['society'] = society;
     return data;
   }
 }

@@ -24,10 +24,10 @@ class _SeachSocietyState extends State<SeachSociety> {
         children: [
           WebView(
             zoomEnabled: true,
-            initialUrl: Urls.BASE_URL,
+            initialUrl: Urls.baseUrl,
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (navigation) {
-              print(navigation.url);
+
               Navigator.pushReplacement(context, RotationRoute(page: WebPdfViewer(webpdf: navigation.url,)));
               return NavigationDecision.prevent;
             },
