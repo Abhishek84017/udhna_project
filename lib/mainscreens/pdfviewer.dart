@@ -1,3 +1,4 @@
+import 'package:voter_management/constants/global.dart';
 import 'package:voter_management/pages/widgets/pageroute.dart';
 import 'package:voter_management/pages/auth/add_new_voter.dart';
 import 'package:voter_management/pages/widgets/signinbutton.dart';
@@ -22,7 +23,7 @@ class _PdfViewerState extends State<PdfViewer> {
             TextButton(
                 onPressed: () {
                   Navigator.pop(context, true);
-                },
+                  },
                 child: const Text('Yes')),
             TextButton(
                 onPressed: () => Navigator.pop(context, false),

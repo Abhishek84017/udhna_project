@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
+
 class GetAllVoterModel {
   int id;
   int assemblyId;
@@ -19,9 +20,10 @@ class GetAllVoterModel {
   String status;
   String inserted;
   int insertedBy;
-  String modified;
-  int modifiedBy;
+  dynamic modified;
+  dynamic modifiedBy;
   dynamic entryBoyId;
+  String society;
 
   GetAllVoterModel(
       {this.id,
@@ -39,7 +41,8 @@ class GetAllVoterModel {
         this.insertedBy,
         this.modified,
         this.modifiedBy,
-        this.entryBoyId});
+        this.entryBoyId,
+        this.society});
 
   GetAllVoterModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -58,26 +61,28 @@ class GetAllVoterModel {
     modified = json['modified'];
     modifiedBy = json['modified_by'];
     entryBoyId = json['entry_boy_id'];
+    society = json['society'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
-    data['id'] = id;
-    data['assembly_id'] = assemblyId;
-    data['booth_id'] = boothId;
-    data['society_id'] = societyId;
-    data['reg_number'] = regNumber;
-    data['name'] = name;
-    data['father_name'] = fatherName;
-    data['house_number'] = houseNumber;
-    data['age'] = age;
-    data['gender'] = gender;
-    data['status'] = status;
-    data['inserted'] = inserted;
-    data['inserted_by'] = insertedBy;
-    data['modified'] = modified;
-    data['modified_by'] = modifiedBy;
-    data['entry_boy_id'] = entryBoyId;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['assembly_id'] = this.assemblyId;
+    data['booth_id'] = this.boothId;
+    data['society_id'] = this.societyId;
+    data['reg_number'] = this.regNumber;
+    data['name'] = this.name;
+    data['father_name'] = this.fatherName;
+    data['house_number'] = this.houseNumber;
+    data['age'] = this.age;
+    data['gender'] = this.gender;
+    data['status'] = this.status;
+    data['inserted'] = this.inserted;
+    data['inserted_by'] = this.insertedBy;
+    data['modified'] = this.modified;
+    data['modified_by'] = this.modifiedBy;
+    data['entry_boy_id'] = this.entryBoyId;
+    data['society'] = this.society;
     return data;
   }
 }
@@ -91,6 +96,7 @@ class GetAllVoter extends StatefulWidget {
 
 class _GetAllVoterState extends State<GetAllVoter> {
   List<GetAllVoterModel> data = <GetAllVoterModel>[];
+
   bool _isloding = true;
 
   void getAllVoters() async {
@@ -128,27 +134,32 @@ class _GetAllVoterState extends State<GetAllVoter> {
         title: const Text('All voter list'),
         automaticallyImplyLeading: false,
       ),
-      body: _isloding ? const Center(child:  CircularProgressIndicator()) :  ListView.builder(
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          var item = data[index];
-          return Padding(
-            padding:  EdgeInsets.symmetric(horizontal:7.w),
-            child: Card(
-              shape:  RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(6.w))
-              ),
-              child: ExpansionTile(
-                leading: Text(item.id.toString() ?? ''),
-                title: Text(item.name ?? ''),
-                subtitle: Text(item.regNumber ?? ''),
-                trailing: Text(item.societyId.toString() ?? ''),
-              ),
+      body: _isloding
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, int index) {
+                var item = data[index];
+                int number = ++index;
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 7.w),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6.w))),
+                    child: ExpansionTile(
+                      leading: Text(number.toString() ?? ''),
+                      title: Text(item.name ?? ''),
+                      subtitle: Text(item.regNumber ?? ''),
+                      children: [ListTile(title:Padding(
+                        padding:  EdgeInsets.only(left:50.w),
+                        child: Text('Society Name :${item.society} ',style: const TextStyle(fontWeight: FontWeight.bold),),
+                      ))],
+                    ),
+                  ),
+                );
+              },
+              itemCount: data.length,
             ),
-          );
-        },
-        itemCount: data.length,
-      ),
     );
   }
 }

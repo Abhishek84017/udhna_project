@@ -144,7 +144,7 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context,
+                          Navigator.push(context,   sendsocitydata[0].title,
                               RotationRoute(page: const ForgetPassword()));
                         },
                       ),

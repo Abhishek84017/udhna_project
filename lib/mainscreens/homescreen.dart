@@ -14,7 +14,6 @@ import 'pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import '../constants/global.dart';
 
-
 class AssemblyModel {
   int id;
   String title;
@@ -216,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void fetchBooth() async {
-     isbooth = true;
+    isbooth = true;
     boothData.clear();
     final response = await http.get(Uri.parse(
         'https://www.votersmanagement.com/api/get-assembly-booth/${assembly[0].id}'));
@@ -231,11 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
         isbooth = false;
         if (boothData.isNotEmpty) {
           defaultBooth = boothData.first.title;
+        } else {
+          Fluttertoast.showToast(msg: 'No Booth Added On This Assembly');
         }
-        else
-          {
-            Fluttertoast.showToast(msg: 'No Booth Added On This Assembly');
-          }
       });
     }
   }
@@ -256,32 +253,32 @@ class _HomeScreenState extends State<HomeScreen> {
         issociety = false;
         if (socityData.isNotEmpty) {
           defaultSociety = socityData.first.title;
+        } else {
+          Fluttertoast.showToast(msg: 'No Society Added on This Booth');
         }
-        else
-          {
-              Fluttertoast.showToast(msg: 'No Society Added on This Booth');
-          }
       });
     }
   }
 
   Future<bool> _onbackpress() async {
-    return await showDialog(context: context, builder:(context) =>  AlertDialog(
-      title: const Text('Do you want to exit the application'),
-      actions: [
-        TextButton(
-          child: const Text('Yes'),
-          onPressed: () {
-            kSharedPreferences.clear();
-            Navigator.pop(context,true);
-          },
-        ),
-        TextButton(
-          child: const Text('No'),
-          onPressed: () => Navigator.pop(context,false),
-        ),
-      ],
-    ));
+    return await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Do you want to exit the application'),
+              actions: [
+                TextButton(
+                  child: const Text('Yes'),
+                  onPressed: () {
+                    kSharedPreferences.clear();
+                    Navigator.pop(context, true);
+                  },
+                ),
+                TextButton(
+                  child: const Text('No'),
+                  onPressed: () => Navigator.pop(context, false),
+                ),
+              ],
+            ));
   }
 
   @override
@@ -301,68 +298,78 @@ class _HomeScreenState extends State<HomeScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-            isassembly == true ? const CircularIndicator() : DropDownButtonWidget(
-                value: defaultAssembly,
-                hinttext: 'Select Assembly',
-                items: assemblyData.map((eas) {
-                  return DropdownMenuItem(value: eas.title, child: Text(eas.title));
-                }).toList(),
-                callback: (newValue) {
-                  setState(() {
-                    defaultAssembly = newValue;
-                    assembly = assemblyData
-                        .where((element) => element.title == defaultAssembly)
-                        .toList();
-                    boothData.clear();
-                    booth.clear();
-                    socityData.clear();
-                    sendsocitydata.clear();
-                    boothLocation = '';
-                    boothNumber = '';
-                    fetchBooth();
-                  });
-                },
-              ),
-             isbooth == true ? const CircularIndicator()   : DropDownButtonWidget(
-                hinttext: 'Select booth',
-                value: defaultBooth,
-                items: boothData.map((item) {
-                  return DropdownMenuItem(
-                      value: item.title, child: Text(item.title));
-                }).toList(),
-                callback: (newValue) {
-                  setState(() {
-                    defaultBooth = newValue;
-                    booth = boothData
-                        .where((element) => element.title == defaultBooth)
-                        .toList();
-                    boothLocation = booth[0].pollingLocation;
-                    boothNumber = booth[0].pollingNumber;
-                    socityData.clear();
-                    sendsocitydata.clear();
-                    fetchSocity();
-                  });
-                },
-              ),
-             issociety == true ? const CircularIndicator() : DropDownButtonWidget(
-                hinttext: 'Select Society',
-                value: defaultSociety,
-                items: socityData.map((e) {
-                  return DropdownMenuItem(value: e.title, child: Text(e.title));
-                }).toList(),
-                callback: (newValue) {
-                  setState(() {
-                    pdfData = '';
-                    defaultSociety = newValue;
-                    sendsocitydata = socityData
-                        .where((element) => element.title == defaultSociety)
-                        .toList();
-                    if (sendsocitydata[0].nameFile != null) {
-                      pdfData = sendsocitydata[0].nameFile;
-                    }
-                  });
-                },
-              ),
+              isassembly == true
+                  ? const CircularIndicator()
+                  : DropDownButtonWidget(
+                      value: defaultAssembly,
+                      hinttext: 'Select Assembly',
+                      items: assemblyData.map((eas) {
+                        return DropdownMenuItem(
+                            value: eas.title, child: Text(eas.title));
+                      }).toList(),
+                      callback: (newValue) {
+                        setState(() {
+                          defaultAssembly = newValue;
+                          assembly = assemblyData
+                              .where(
+                                  (element) => element.title == defaultAssembly)
+                              .toList();
+                          boothData.clear();
+                          booth.clear();
+                          socityData.clear();
+                          sendsocitydata.clear();
+                          boothLocation = '';
+                          boothNumber = '';
+                          fetchBooth();
+                        });
+                      },
+                    ),
+              isbooth == true
+                  ? const CircularIndicator()
+                  : DropDownButtonWidget(
+                      hinttext: 'Select booth',
+                      value: defaultBooth,
+                      items: boothData.map((item) {
+                        return DropdownMenuItem(
+                            value: item.title, child: Text(item.title));
+                      }).toList(),
+                      callback: (newValue) {
+                        setState(() {
+                          defaultBooth = newValue;
+                          booth = boothData
+                              .where((element) => element.title == defaultBooth)
+                              .toList();
+                          boothLocation = booth[0].pollingLocation;
+                          boothNumber = booth[0].pollingNumber;
+                          socityData.clear();
+                          sendsocitydata.clear();
+                          fetchSocity();
+                        });
+                      },
+                    ),
+              issociety == true
+                  ? const CircularIndicator()
+                  : DropDownButtonWidget(
+                      hinttext: 'Select Society',
+                      value: defaultSociety,
+                      items: socityData.map((e) {
+                        return DropdownMenuItem(
+                            value: e.title, child: Text(e.title));
+                      }).toList(),
+                      callback: (newValue) {
+                        setState(() {
+                          pdfData = '';
+                          defaultSociety = newValue;
+                          sendsocitydata = socityData
+                              .where(
+                                  (element) => element.title == defaultSociety)
+                              .toList();
+                          if (sendsocitydata[0].nameFile != null) {
+                            pdfData = sendsocitydata[0].nameFile;
+                          }
+                        });
+                      },
+                    ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -381,15 +388,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: Border.all(color: Colors.black, width: 1.5.w),
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.w, vertical: 10.h),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(boothLocation ?? ''),
-                          Text(
-                            boothNumber ?? '',
-                          ),
+                          Text('Address: $boothLocation' ?? ''),
+                          SizedBox(height: 5.h),
+                          Text('Number: $boothNumber' ?? '',),
                         ],
                       ),
                     ),
@@ -409,14 +415,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     return;
                   }
                   if (sendsocitydata.isEmpty) {
-
                     Fluttertoast.showToast(msg: 'Society Not Selected');
                     return;
                   }
                   await kSharedPreferences.setStringList('AllId', <String>[
                     assembly[0].id.toString(),
                     booth[0].id.toString(),
-                    sendsocitydata[0].id.toString()
+                    sendsocitydata[0].id.toString(),
                   ]);
                   Navigator.push(
                       context,
